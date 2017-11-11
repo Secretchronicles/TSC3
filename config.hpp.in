@@ -1,0 +1,42 @@
+/***************************************************************************
+ * config.h  -  TSC configuration header
+ *
+ * Copyright © 2017 The TSC Contributors
+ ***************************************************************************
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef TSC_CONFIG_HPP
+#define TSC_CONFIG_HPP
+
+// TSC version number
+#define TSC_VERSION_MAJOR @TSC_VERSION_MAJOR@
+#define TSC_VERSION_MINOR @TSC_VERSION_MINOR@
+#define TSC_VERSION_PATCH @TSC_VERSION_PATCH@
+#cmakedefine TSC_VERSION_GIT "@TSC_VERSION_GIT@"
+#cmakedefine TSC_VERSION_POSTFIX "@TSC_VERSION_POSTFIX@"
+
+// TSC compile date
+#define TSC_COMPILE_YEAR  @TSC_COMPILE_YEAR@
+#define TSC_COMPILE_MONTH @TSC_COMPILE_MONTH@
+#define TSC_COMPILE_DAY   @TSC_COMPILE_DAY@
+
+// Enables translations and localisations. Undefining it
+// will cause TSC to be always in English.
+#cmakedefine ENABLE_NLS 1
+
+// Indicate where the "make install" step put its data to.
+// The value of these macros is ignored on Windows, where
+// the TSC data directory is determined relative to
+// the `tsc' executable.
+#define INSTALL_PREFIX  "@CMAKE_INSTALL_PREFIX@"
+#define INSTALL_DATADIR "@CMAKE_INSTALL_DATADIR@"
+
+#endif
