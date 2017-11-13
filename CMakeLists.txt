@@ -56,9 +56,14 @@ option(ENABLE_NLS "Enable translations and localisations" ON)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# For C, go with C11
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_EXTENSIONS OFF)
+
 # General compiler flags
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wl,--as-needed")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-inline")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wl,--as-needed")
 
 # Find out the host triplet if we are crosscompiling.
 # This is needed because the mruby build system uses it
@@ -68,6 +73,11 @@ if (CMAKE_CROSSCOMPILING)
   string(REGEX REPLACE "(.*)-.*$" "\\1" HOST_TRIPLET "${HOST_TRIPLET}")
   message(STATUS "Detected cross-compilation targetting: ${HOST_TRIPLET}")
 endif()
+
+########################################
+# Dependencies
+
+find_package(PNG REQUIRED)
 
 ########################################
 # Configuration header
@@ -83,10 +93,21 @@ file(GLOB_RECURSE tsc_sources
   "src/*.cpp"
   "src/*.hpp")
 
+file(GLOB_RECURSE tscproc_sources
+  "tscproc/*.c"
+  "tscproc/*.h")
+
 ########################################
 # Targets
 
+add_executable(tscproc ${tscproc_sources})
 add_executable(tsc ${tsc_sources})
+
+# Add tscproc's compilation options only here to not confuse the main
+# compilation of the 'tsc' target.
+target_include_directories(tscproc PUBLIC ${PNG_INCLUDE_DIRS})
+target_compile_definitions(tscproc PUBLIC ${PNG_DEFINITIONS})
+target_link_libraries(tscproc ${PNG_LIBRARIES})
 
 ########################################
 # Installation instructions
