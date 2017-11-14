@@ -35,20 +35,21 @@ using namespace std;
  * with a PNG file. */
 static const size_t PNG_MAGIC_BYTE_COUNT = 8;
 
-/* Linked list of bounding boxes. If a tile in a tileset has
- * no bounding box, the `x' and `y' members are set to -1.
- * The first bbox describes the top-left tile, the next one
- * the one to the right, than the one further to the right,
- * etc., until the entire width of the tileset is covered.
- * The next bbox then describes the first tile of the second
- * row, and then things repeat until end of image.
- */
+/* Bounding box. If a tile in a tileset has
+ * no bounding box, the `x' and `y' members are set to -1. */
 struct bbox {
     int x;
     int y;
     int w;
     int h;
 };
+
+struct {
+    int htiles;
+    int vtiles;
+    string infile;
+    string outfile;
+} cmdargs;
 
 bool check_if_png(FILE* fp)
 {
@@ -137,51 +138,36 @@ vector<bbox> read_bboxes(int imgwidth, int imgheight, png_bytep row_pointers[])
     return bboxes;
 }
 
-vector<bbox> extract_bboxes(string bbox_file)
+vector<bbox> extract_bboxes(FILE* infile)
 {
-    FILE* p_tspng        = NULL;
     png_structp p_png    = NULL;
     png_infop p_png_info = NULL;
-
-    // Set up libpng
-    if (!(p_tspng = fopen(bbox_file.c_str(), "rb"))) {
-        cerr << "Cannot open file " << bbox_file << " for reading" << endl;
-        exit(1);
-    }
-
-    if (!check_if_png(p_tspng)) {
-        fclose(p_tspng);
-        cerr << "File " << bbox_file << " is not a PNG file" << endl;
-        exit(1);
-    }
+    vector<bbox> bboxes;
 
     p_png = png_create_read_struct(PNG_LIBPNG_VER_STRING,
                                    NULL, NULL, NULL);
     if (!p_png) {
-        fclose(p_tspng);
         cerr << "Internal error: cannot create PNG struct" << endl;
-        exit(2);
+        return bboxes;
     }
 
     if (!(p_png_info = png_create_info_struct(p_png))) {
         png_destroy_read_struct(&p_png, NULL, NULL);
-        fclose(p_tspng);
         cerr << "Internal error: cannot create PNG info struct" << endl;
-        exit(2);
+        return bboxes;
     }
 
     /* If libpng wants to signal an error, it will longjmp() here
      * (see libpng manual). */
     if (setjmp(png_jmpbuf(p_png))) {
         png_destroy_read_struct(&p_png, &p_png_info, NULL);
-        fclose(p_tspng);
         cerr << "Internal error while reading the PNG file" << endl;
-        exit(3);
+        return bboxes;
     }
 
     // Read PNG header
-    png_init_io(p_png, p_tspng);
-    png_set_sig_bytes(p_png, PNG_MAGIC_BYTE_COUNT);
+    png_init_io(p_png, infile);
+    png_set_sig_bytes(p_png, PNG_MAGIC_BYTE_COUNT); // Check already done prior
     png_read_info(p_png, p_png_info);
 
     // Get some info
@@ -196,10 +182,9 @@ vector<bbox> extract_bboxes(string bbox_file)
     for (int y=0; y < height; y++)
         row_pointers[y] = (png_byte*) malloc(png_get_rowbytes(p_png, p_png_info));
     png_read_image(p_png, row_pointers);
-    fclose(p_tspng);
 
     // Read bounding boxes
-    vector<bbox> bboxes = read_bboxes(width, height, row_pointers);
+    bboxes = move(read_bboxes(width, height, row_pointers));
 
     // Cleanup
     png_destroy_read_struct(&p_png, &p_png_info, NULL);
@@ -210,18 +195,114 @@ vector<bbox> extract_bboxes(string bbox_file)
     return bboxes;
 }
 
-int main(int argc, char* argv[])
+void print_help()
 {
-    if (argc < 2) {
-        cerr << "Too few arguments. Usage: tscproc BBOXPNGFILE" << endl;
-        return 1;
-    }
+    cout << "USAGE: tscproc [OPTIONS]\n"
+"\n"
+"tscproc processes TSC's tile metadata files. If given a PNG\n"
+"file as input, it determines the collision rectangle for each\n"
+"tile from it by searching for areas not fully transparent. If\n"
+"given an XML file as input, it generates a PNG file describing\n"
+"the collision rectangles.\n"
+"\n"
+"OPTIONS:\n"
+"\n"
+"  -h            Print this help.\n"
+"  -i INPUT      Input file. Pass - for standard input.\n"
+"  -o OUTPUT     Output file. Pass - for standard output.\n"
+"  -t ROWS:COLS  If the input is a PNG file, this option gives\n"
+"                the number of rows and columns the tileset has,\n"
+"                in numbers of tiles.\n";
+    exit(3);
+}
 
-    vector<bbox> bboxes = extract_bboxes(argv[1]);
+void parse_commandline(int argc, char* argv[])
+{
+    cmdargs.htiles = 0;
+    cmdargs.vtiles = 0;
+
+    for(int i=1; i < argc; i++) {
+        string arg = string(argv[i]);
+
+        if (arg[0] == '-') { // Option
+            switch (arg[1]) {
+            case 't':
+                if (i + 1 >= argc)
+                    print_help();
+                else {
+                    string tilestr = argv[++i];
+                    int delim      = tilestr.find(":");
+                    cmdargs.vtiles = stoi(tilestr.substr(0, delim));
+                    cmdargs.htiles = stoi(tilestr.substr(delim+1));
+                }
+                break;
+            case 'i':
+                if (i + 1 >= argc)
+                    print_help();
+
+                cmdargs.infile = argv[++i];
+
+                // stdin is used if infile is empty
+                if (cmdargs.infile == "-")
+                    cmdargs.infile.clear();
+
+                break;
+            case 'o':
+                if (i + 1 >= argc)
+                    print_help();
+
+                cmdargs.outfile = argv[++i];
+
+                // stdout is used if outfile is empty
+                if (cmdargs.outfile == "-")
+                    cmdargs.outfile.clear();
+
+                break;
+            case 'h':
+                print_help();
+                break;
+            default:
+                cerr << "Unknown argument " << arg << endl;
+                print_help();
+                break;
+            }
+        }
+    }
+}
+
+void output_xml(FILE* infile)
+{
+    vector<bbox> bboxes = extract_bboxes(infile);
+
+    if (bboxes.empty())
+        cerr << "Warning: No collision rectangles found" << endl;
 
     /* TODO: Generate XML */
     for(bbox& box: bboxes)
         printf("BBox x=%4d y=%4d width=%4d height=%4d\n", box.x, box.y, box.w, box.h);
+}
+
+void input_xml(FILE* input)
+{
+    /* TODO */
+}
+
+int main(int argc, char* argv[])
+{
+    parse_commandline(argc, argv);
+
+    FILE* infile = cmdargs.infile.empty() ? stdin : fopen(cmdargs.infile.c_str(), "rb");
+    if (!infile) {
+        cerr << "Failed to open input file." << endl;
+        return 1;
+    }
+
+    if (check_if_png(infile))
+        output_xml(infile);
+    else
+        input_xml(infile);
+
+    fclose(infile);
 
     return 0;
 }
