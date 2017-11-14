@@ -19,6 +19,7 @@
 #include <map>
 #include <string>
 #include <iostream>
+#include <fstream>
 #include <cstdio>
 #include <cstdlib>
 #include <csetjmp>
@@ -291,9 +292,48 @@ void output_xml(FILE* infile)
     if (bboxes.empty())
         cerr << "Warning: No collision rectangles found" << endl;
 
-    /* TODO: Generate XML */
-    for(bbox& box: bboxes)
-        printf("BBox x=%4d y=%4d width=%4d height=%4d\n", box.x, box.y, box.w, box.h);
+    if (cmdargs.authors.empty())
+        cerr << "Warning: No authors given. Pass at least one -a option." << endl;
+
+    // Output goes to real file if passed, otherwise standard output.
+    ofstream outfilefile;
+    if (!cmdargs.outfile.empty())
+        outfilefile.open(cmdargs.outfile);
+    ostream& outfile = cmdargs.outfile.empty() ? cout : outfilefile;
+
+    outfile << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl
+            << "<tileset version=\"1.0\">" << endl
+            << "  <cols>" << cmdargs.htiles << "</cols>" << endl
+            << "  <rows>" << cmdargs.vtiles << "</rows>" << endl
+            << "  <authors>" << endl;
+
+    for(auto iter=cmdargs.authors.begin(); iter != cmdargs.authors.end(); iter++) {
+        outfile << "    <author>" << endl
+                << "      <name>" << iter->first << "</name>" << endl
+                << "      <detail>" << iter->second << "</detail>" << endl
+                << "    </author>" << endl;
+    }
+
+    outfile << "  </authors>" << endl
+            << "  <tiles>" << endl;
+
+    for(const bbox& box: bboxes) {
+        outfile << "    <tile>" << endl
+                << "      <colrect x=\""
+                  << box.x
+                  << "\" y=\""
+                  << box.y
+                  << "\" width=\""
+                  << box.w
+                  << "\" height=\""
+                  << box.h
+                  << "\"/>"
+                  << endl
+                << "    </tile>" << endl;
+    }
+
+    outfile << "  </tiles>" << endl
+            << "</tileset>" << endl;
 }
 
 void input_xml(FILE* input)
