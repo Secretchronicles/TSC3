@@ -16,6 +16,7 @@
  */
 
 #include <vector>
+#include <map>
 #include <string>
 #include <iostream>
 #include <cstdio>
@@ -49,6 +50,7 @@ struct {
     int vtiles;
     string infile;
     string outfile;
+    map<string, string> authors;
 } cmdargs;
 
 bool check_if_png(FILE* fp)
@@ -207,6 +209,9 @@ void print_help()
 "\n"
 "OPTIONS:\n"
 "\n"
+"  -a NAME:DESC  Add one <author> info with author name and\n"
+"                detailed description. Only used if input is\n"
+"                a PNG file. Can be passed multiple times.\n"
 "  -h            Print this help.\n"
 "  -i INPUT      Input file. Pass - for standard input.\n"
 "  -o OUTPUT     Output file. Pass - for standard output.\n"
@@ -234,6 +239,15 @@ void parse_commandline(int argc, char* argv[])
                     int delim      = tilestr.find(":");
                     cmdargs.vtiles = stoi(tilestr.substr(0, delim));
                     cmdargs.htiles = stoi(tilestr.substr(delim+1));
+                }
+                break;
+            case 'a':
+                if (i + 1 >= argc)
+                    print_help();
+                else {
+                    string authorstr = argv[++i];
+                    int delim = authorstr.find(":");
+                    cmdargs.authors[authorstr.substr(0, delim)] = authorstr.substr(delim+1);
                 }
                 break;
             case 'i':
