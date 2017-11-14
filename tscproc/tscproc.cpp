@@ -201,8 +201,11 @@ vector<bbox> extract_bboxes(string bbox_file)
     // Read bounding boxes
     vector<bbox> bboxes = read_bboxes(width, height, row_pointers);
 
-    // Cleanup libpng
+    // Cleanup
     png_destroy_read_struct(&p_png, &p_png_info, NULL);
+    for(int y=0; y < height; y++)
+        free(row_pointers[y]);
+    free(row_pointers);
 
     return bboxes;
 }
