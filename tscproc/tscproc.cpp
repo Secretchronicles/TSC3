@@ -16,14 +16,13 @@
  */
 
 #include <vector>
-#include <map>
-#include <string>
 #include <iostream>
 #include <fstream>
 #include <cstdio>
 #include <cstdlib>
 #include <csetjmp>
 #include <png.h>
+#include "commandline.hpp"
 
 using namespace std;
 
@@ -39,14 +38,6 @@ struct bbox {
     int w;
     int h;
 };
-
-struct {
-    int htiles;
-    int vtiles;
-    string infile;
-    string outfile;
-    map<string, string> authors;
-} cmdargs;
 
 bool check_if_png(FILE* fp)
 {
@@ -192,93 +183,6 @@ vector<bbox> extract_bboxes(FILE* infile, int htiles, int vtiles)
     return bboxes;
 }
 
-void print_help()
-{
-    cout << "USAGE: tscproc [OPTIONS]\n"
-"\n"
-"tscproc processes TSC's tile metadata files. If given a PNG\n"
-"file as input, it determines the collision rectangle for each\n"
-"tile from it by searching for areas not fully transparent. If\n"
-"given an XML file as input, it generates a PNG file describing\n"
-"the collision rectangles.\n"
-"\n"
-"OPTIONS:\n"
-"\n"
-"  -a NAME:DESC  Add one <author> info with author name and\n"
-"                detailed description. Only used if input is\n"
-"                a PNG file. Can be passed multiple times.\n"
-"  -h            Print this help.\n"
-"  -i INPUT      Input file. Pass - for standard input.\n"
-"  -o OUTPUT     Output file. Pass - for standard output.\n"
-"  -t ROWS:COLS  If the input is a PNG file, this option gives\n"
-"                the number of rows and columns the tileset has,\n"
-"                in numbers of tiles.\n";
-    exit(3);
-}
-
-void parse_commandline(int argc, char* argv[])
-{
-    cmdargs.htiles = 0;
-    cmdargs.vtiles = 0;
-
-    for(int i=1; i < argc; i++) {
-        string arg = string(argv[i]);
-
-        if (arg[0] == '-') { // Option
-            switch (arg[1]) {
-            case 't':
-                if (i + 1 >= argc)
-                    print_help();
-                else {
-                    string tilestr = argv[++i];
-                    int delim      = tilestr.find(":");
-                    cmdargs.vtiles = stoi(tilestr.substr(0, delim));
-                    cmdargs.htiles = stoi(tilestr.substr(delim+1));
-                }
-                break;
-            case 'a':
-                if (i + 1 >= argc)
-                    print_help();
-                else {
-                    string authorstr = argv[++i];
-                    int delim = authorstr.find(":");
-                    cmdargs.authors[authorstr.substr(0, delim)] = authorstr.substr(delim+1);
-                }
-                break;
-            case 'i':
-                if (i + 1 >= argc)
-                    print_help();
-
-                cmdargs.infile = argv[++i];
-
-                // stdin is used if infile is empty
-                if (cmdargs.infile == "-")
-                    cmdargs.infile.clear();
-
-                break;
-            case 'o':
-                if (i + 1 >= argc)
-                    print_help();
-
-                cmdargs.outfile = argv[++i];
-
-                // stdout is used if outfile is empty
-                if (cmdargs.outfile == "-")
-                    cmdargs.outfile.clear();
-
-                break;
-            case 'h':
-                print_help();
-                break;
-            default:
-                cerr << "Unknown argument " << arg << endl;
-                print_help();
-                break;
-            }
-        }
-    }
-}
-
 void output_xml(FILE* infile, int htiles, int vtiles)
 {
     if (htiles <= 0 || vtiles <= 0) {
@@ -291,22 +195,22 @@ void output_xml(FILE* infile, int htiles, int vtiles)
     if (bboxes.empty())
         cerr << "Warning: No collision rectangles found" << endl;
 
-    if (cmdargs.authors.empty())
+    if (cmdline.authors.empty())
         cerr << "Warning: No authors given. Pass at least one -a option." << endl;
 
     // Output goes to real file if passed, otherwise standard output.
     ofstream outfilefile;
-    if (!cmdargs.outfile.empty())
-        outfilefile.open(cmdargs.outfile);
-    ostream& outfile = cmdargs.outfile.empty() ? cout : outfilefile;
+    if (!cmdline.outfile.empty())
+        outfilefile.open(cmdline.outfile);
+    ostream& outfile = cmdline.outfile.empty() ? cout : outfilefile;
 
     outfile << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl
             << "<tileset version=\"1.0\">" << endl
-            << "  <cols>" << cmdargs.htiles << "</cols>" << endl
-            << "  <rows>" << cmdargs.vtiles << "</rows>" << endl
+            << "  <cols>" << cmdline.htiles << "</cols>" << endl
+            << "  <rows>" << cmdline.vtiles << "</rows>" << endl
             << "  <authors>" << endl;
 
-    for(auto iter=cmdargs.authors.begin(); iter != cmdargs.authors.end(); iter++) {
+    for(auto iter=cmdline.authors.begin(); iter != cmdline.authors.end(); iter++) {
         outfile << "    <author>" << endl
                 << "      <name>" << iter->first << "</name>" << endl
                 << "      <detail>" << iter->second << "</detail>" << endl
@@ -344,14 +248,14 @@ int main(int argc, char* argv[])
 {
     parse_commandline(argc, argv);
 
-    FILE* infile = cmdargs.infile.empty() ? stdin : fopen(cmdargs.infile.c_str(), "rb");
+    FILE* infile = cmdline.infile.empty() ? stdin : fopen(cmdline.infile.c_str(), "rb");
     if (!infile) {
         cerr << "Failed to open input file." << endl;
         return 1;
     }
 
     if (check_if_png(infile))
-        output_xml(infile, cmdargs.htiles, cmdargs.vtiles);
+        output_xml(infile, cmdline.htiles, cmdline.vtiles);
     else
         input_xml(infile);
 
