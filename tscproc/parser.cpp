@@ -36,9 +36,9 @@ namespace {
     class TilesetHandler: public xercesc::DefaultHandler
     {
     public:
-        void startElement(const XMLCh* const xuri,
+        void startElement(const XMLCh* const,
                           const XMLCh* const xlocalname,
-                          const XMLCh* const xqname,
+                          const XMLCh* const,
                           const Attributes& attrs)
             {
                 std::string localname(xstr_to_utf8(xlocalname));
