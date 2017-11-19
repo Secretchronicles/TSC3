@@ -4,6 +4,7 @@
 #include <map>
 
 struct cmdargs {
+    bool input_is_png;
     int htiles;
     int vtiles;
     std::string infile;

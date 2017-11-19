@@ -17,6 +17,11 @@ static void print_help()
 "given an XML file as input, it generates a PNG file describing\n"
 "the collision rectangles.\n"
 "\n"
+"If read from standard input is requested, one of the options -P\n"
+"(assume PNG input) or -X (assume XML input) is required. Otherwise\n"
+"the operational mode is determined by looking at the file extension\n"
+"of the file given as input.\n"
+"\n"
 "OPTIONS:\n"
 "\n"
 "  -a NAME:DESC  Add one <author> info with author name and\n"
@@ -25,9 +30,11 @@ static void print_help()
 "  -h            Print this help.\n"
 "  -i INPUT      Input file. Pass - for standard input.\n"
 "  -o OUTPUT     Output file. Pass - for standard output.\n"
+"  -P            Force input to be treated as a PNG file.\n"
 "  -t ROWS:COLS  If the input is a PNG file, this option gives\n"
 "                the number of rows and columns the tileset has,\n"
-"                in numbers of tiles.\n";
+"                in numbers of tiles.\n"
+" -X             Force input to be treated as an XML file.\n";
     exit(3);
 }
 
@@ -42,6 +49,7 @@ void parse_commandline(int argc, char* argv[])
 {
     cmdline.htiles = 0;
     cmdline.vtiles = 0;
+    bool mode_known = false;
 
     for(int i=1; i < argc; i++) {
         string arg = string(argv[i]);
@@ -89,6 +97,14 @@ void parse_commandline(int argc, char* argv[])
                     cmdline.outfile.clear();
 
                 break;
+            case 'P':
+                cmdline.input_is_png = true;
+                mode_known = true;
+                break;
+            case 'X':
+                cmdline.input_is_png = false;
+                mode_known = true;
+                break;
             case 'h':
                 print_help();
                 break;
@@ -99,4 +115,13 @@ void parse_commandline(int argc, char* argv[])
             }
         }
     }
+
+    if (mode_known)
+        return;
+    if (cmdline.infile.empty()) {
+        cerr << "If standard input is used as input, you have to pass either the -P or the -X option." << endl;
+        print_help();
+    }
+
+    cmdline.input_is_png = cmdline.infile.find(".png") != string::npos;
 }
