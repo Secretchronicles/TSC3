@@ -4,10 +4,12 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
+#include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/sax2/DefaultHandler.hpp>
 #include <xercesc/sax2/SAX2XMLReader.hpp>
 #include <xercesc/sax2/Attributes.hpp>
 #include <xercesc/sax2/XMLReaderFactory.hpp>
+#include <xercesc/framework/StdInInputSource.hpp>
 
 using namespace std;
 using namespace xercesc;
@@ -40,6 +42,8 @@ namespace {
 
 vector<tuple<int, int, int, int>> parse_tileset(const string& path)
 {
+    XMLPlatformUtils::Initialize();
+
     unique_ptr<SAX2XMLReader> p_parser(XMLReaderFactory::createXMLReader());
     p_parser->setFeature(XMLUni::fgSAX2CoreValidation, false);
 
@@ -48,7 +52,13 @@ vector<tuple<int, int, int, int>> parse_tileset(const string& path)
     p_parser->setErrorHandler(&handler);
 
     try {
-        p_parser->parse(utf8_to_xstr(path).get());
+        if (path.empty()) { // Read from standard input requested
+            StdInInputSource source;
+            p_parser->parse(source);
+        }
+        else { // Read from file requested
+            p_parser->parse(utf8_to_xstr(path).get());
+        }
     }
     catch (const XMLException& err) {
         cerr << "Error: " << xstr_to_utf8(err.getMessage()) << endl;
@@ -63,5 +73,6 @@ vector<tuple<int, int, int, int>> parse_tileset(const string& path)
         exit(2);
     }
 
+    XMLPlatformUtils::Terminate();
     return handler.boxes;
 }
