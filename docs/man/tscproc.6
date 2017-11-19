@@ -1,0 +1,127 @@
+.TH TSCPROC "6" "2017-11-19" "The Secret Chronicles of Dr. M." "Games"
+.SH NAME
+tscproc \- XML metadata processor for The Secret Chronicles of Dr. M.
+
+.SH SYNOPSIS
+.B tscproc \fIMODE\fR [\fIOPTION\fR]...
+
+.SH DESCRIPTION
+.PP
+\fItscproc\fR is a helper programme that can generate and process the
+XML metadata files that contain information about tilesets used by
+TSC. Its primary purpose is to free the artist from the laborous work of
+creating the collision rectangle information in the XML metadata
+manually. This is achieved by allowing to draw the collision
+rectangles of each tileset directly within the graphics programme and
+exporting them into a separate PNG file of the same dimensions as the
+original tileset. The artist can then execute \fItscproc\fR, passing
+it the path to the PNG file containing the collision rectangles, a
+dimensional specification that tells the programme how many rows and
+columns are there in the tileset, and an output filename.
+.PP
+\fBWarning:\fR Tilesets (and hence the collision rectangle helper PNG
+files) need to have dimensions that are powers of 2, otherwise
+\fItscproc\fR is going to become confused and produce garbage output.
+.PP
+\fItscproc\fR operates in one of the modes listed below
+\fIMODES\fR. Currently, there are only two, either generating a
+metadata XML file for a tileset from a collision rectangle file, or
+generating a collision rectangle PNG file from a tileset and a
+pre-existing XML metadata file. It is required to specify at least one
+"mode" parameter and failure to do so will cause the programme to exit
+with an error message.
+
+.SH MODES
+.TP
+\fB\-M\fR
+Generate tileset XML metadata.
+.TP
+\fB\-P\fR
+Generate a collision rectangle PNG from a tileset and a corresponding
+metadata file.
+
+.SH OPTIONS
+.PP
+Each of the options below that takes a \fIFILE\fR argument can also be
+given the literal string \fB\-\fR (a minus sign) for reading from
+standard input or writing to standard output depending on the mode of
+operation. Ommission of any option that takes a \fIFILE\fR argument
+has the same effect.
+.TP
+\fB\-a \fINAME\fB:\fIDESC\fR
+Adds information about an author into the generated XML
+file. \fINAME\fR gives the name of the author in question and
+\fIDESC\fR gives details about what kind of work he did. This
+information is important for licensing questions and \fItscproc\fR
+will yield a warning if it is requested to generate XML and this option is
+missing. This option can be used multiple times, in which case it will
+add multiple authors to the XML. This option can only be used in
+\fB\-M\fR mode.
+.TP
+\fB\-c \fIFILE\fR
+Specifies the collision box PNG file. This file needs to have the
+exact same dimensions as the original tileset PNG file.
+.TP
+\fB\-d \fIROWS\fB:\fICOLS\fR
+Gives the number of tile rows and columns (not pixels!) the tileset PNG
+has. \fItscproc\fR uses this information to calculate the size of one
+tile in the tileset. If this value is specified incorrectly, the
+generated collision rectangle information will not fit to the visual
+appearance of the tileset. This option can only be used in \fB\-M\fR
+mode.
+.TP
+\fB\-h\fR
+This option makes \fItscproc\fR print a short help message.
+.TP
+\fB\-t \fIFILE\fR
+Specifies the tileset PNG file. This option can only be used in
+\fB\-P\fR mode.
+.TP
+\fB-x \fIFILE\fR
+Specifies the metadata XML file.
+
+.SH BUGS
+.PP
+It is currently not possible to read from or write to files that are
+literally named \fB\-\fR (a minus sign). Trying to do so instructs
+\fItscproc\fR to interact with the standard input or output stream
+depending on the mode of operation.
+
+.SH EXAMPLE
+.PP
+You first need to create a tileset as usual. For the sake of this
+example, it is assumed that there's a tileset in PNG file format named
+\fIgreen.png\fR that has a width of 768 pixels and a height of 1280
+pixels. This tileset contains 5 rows and 3 columns, i.e. each tile has
+the dimensions 256✕256px.
+.PP
+The first step is to open the tileset in your preferred graphics
+editor, e.g. using the GIMP (see
+.BR gimp (1)
+). Add a new layer above the tileset and draw the collision rectangles
+for all your tiles using some semi-transparent colour of your
+choice. Once done with that, hide the tileset layer so that only the
+collision rectangle layer remains and export that one to a separate
+PNG file. That file, referred to as \fBcolrects.png\fR below, is the
+collision rectangle PNG file.
+.PP
+To generate the metadata XML file that
+.BR tsc (1)
+can understand, execute \fItscproc\fR:
+.PP
+.RS
+.EX
+$ \fBtscproc -M -c colrects.png -x meta.xml -d 5:3
+.EE
+.RE
+.PP
+The \fB-M\fR option requests metadata generation mode, with \fB-c\fR
+you pass the collision rectangle PNG file, \fB-x\fR gives the output
+file for the XML, and \fB-d\fR specifies the number of rows and
+columns in the tileset.
+
+.SH SEE ALSO
+.PP
+tsc(1)
+.PP
+Website: <https://secretchronicles.org>
