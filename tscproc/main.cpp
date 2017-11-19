@@ -64,16 +64,16 @@ bool is_painted_pixel(png_byte* pix)
     return pix[3] > 0;
 }
 
-vector<bbox> read_bboxes(int htiles, int vtiles, int imgwidth, int imgheight, png_bytep row_pointers[])
+vector<bbox> read_bboxes(int imgwidth, int imgheight, png_bytep row_pointers[])
 {
-    int tilewidth  = imgwidth  / htiles;
-    int tileheight = imgheight / vtiles;
+    int tilewidth  = imgwidth  / cmdline.htiles;
+    int tileheight = imgheight / cmdline.vtiles;
 
-    vector<bbox> bboxes(htiles * vtiles);
+    vector<bbox> bboxes(cmdline.htiles * cmdline.vtiles);
 
     // Tile by tile, determine the bboxes.
-    for(int tileno=0; tileno < htiles * vtiles; tileno++) {
-        int vstart = tileno / htiles * tileheight;
+    for(int tileno=0; tileno < cmdline.htiles * cmdline.vtiles; tileno++) {
+        int vstart = tileno / cmdline.htiles * tileheight;
         int vend   = vstart + tileheight; // excluded, this is one behind the last row
 
         // Get element to work with
@@ -98,7 +98,7 @@ vector<bbox> read_bboxes(int htiles, int vtiles, int imgwidth, int imgheight, pn
                 continue; // Skip row iteration, not needed anymore
             }
 
-            int hstart = tileno % htiles * tilewidth; // included, this is the first column
+            int hstart = tileno % cmdline.htiles * tilewidth; // included, this is the first column
             int hend   = hstart + tilewidth; // excluded, this is one behind the last column
             for(int x=hstart; x < hend; x++) {
                 png_bytep p_pixel = &(row[x*4]);
@@ -126,7 +126,7 @@ vector<bbox> read_bboxes(int htiles, int vtiles, int imgwidth, int imgheight, pn
     return bboxes;
 }
 
-vector<bbox> extract_bboxes(FILE* infile, int htiles, int vtiles)
+vector<bbox> extract_bboxes(FILE* infile)
 {
     png_structp p_png    = NULL;
     png_infop p_png_info = NULL;
@@ -172,7 +172,7 @@ vector<bbox> extract_bboxes(FILE* infile, int htiles, int vtiles)
     png_read_image(p_png, row_pointers);
 
     // Read bounding boxes
-    bboxes = move(read_bboxes(htiles, vtiles, width, height, row_pointers));
+    bboxes = move(read_bboxes(width, height, row_pointers));
 
     // Cleanup
     png_destroy_read_struct(&p_png, &p_png_info, NULL);
@@ -183,14 +183,14 @@ vector<bbox> extract_bboxes(FILE* infile, int htiles, int vtiles)
     return bboxes;
 }
 
-void output_xml(FILE* infile, int htiles, int vtiles)
+void output_xml(FILE* infile)
 {
-    if (htiles <= 0 || vtiles <= 0) {
+    if (cmdline.htiles <= 0 || cmdline.vtiles <= 0) {
         cerr << "Error: Rows and/or columns specification required. Did you pass -t?" << endl;
         return;
     }
 
-    vector<bbox> bboxes = extract_bboxes(infile, htiles, vtiles);
+    vector<bbox> bboxes = extract_bboxes(infile);
 
     if (bboxes.empty())
         cerr << "Warning: No collision rectangles found" << endl;
@@ -255,7 +255,7 @@ int main(int argc, char* argv[])
     }
 
     if (check_if_png(infile))
-        output_xml(infile, cmdline.htiles, cmdline.vtiles);
+        output_xml(infile);
     else
         input_xml(infile);
 
