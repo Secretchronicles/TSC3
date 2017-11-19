@@ -31,20 +31,26 @@ namespace {
                     string w(xstr_to_utf8(attrs.getValue(utf8_to_xstr("width").get())));
                     string h(xstr_to_utf8(attrs.getValue(utf8_to_xstr("height").get())));
 
-                    boxes.push_back(move(make_tuple(atoi(x.c_str()), atoi(y.c_str()), atoi(w.c_str()), atoi(h.c_str()))));
+                    boxes.push_back(move(bbox{atoi(x.c_str()), atoi(y.c_str()), atoi(w.c_str()), atoi(h.c_str())}));
                 }
             }
 
-        vector<tuple<int, int, int, int>> boxes;
+        vector<bbox> boxes;
     };
 
 }
 
-vector<tuple<int, int, int, int>> parse_tileset(const string& path)
+/**
+ * Parses the XML tileset metadata in the given file and returns
+ * a list of collision rectangles found. If `path` is empty, reads
+ * the XML from standard input instead.
+ */
+vector<bbox> parse_tileset_metadata(const string& path)
 {
     XMLPlatformUtils::Initialize();
 
-    unique_ptr<SAX2XMLReader> p_parser(XMLReaderFactory::createXMLReader());
+    // unique_ptr<SAX2XMLReader> p_parser(XMLReaderFactory::createXMLReader());
+    SAX2XMLReader* p_parser = XMLReaderFactory::createXMLReader();
     p_parser->setFeature(XMLUni::fgSAX2CoreValidation, false);
 
     TilesetHandler handler;

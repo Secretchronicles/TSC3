@@ -9,32 +9,29 @@ cmdargs cmdline;
 
 static void print_help()
 {
-    cout << "USAGE: tscproc [OPTIONS]\n"
+    cout << "USAGE: tscproc [MODE] [OPTIONS]\n"
 "\n"
-"tscproc processes TSC's tile metadata files. If given a PNG\n"
-"file as input, it determines the collision rectangle for each\n"
-"tile from it by searching for areas not fully transparent. If\n"
-"given an XML file as input, it generates a PNG file describing\n"
-"the collision rectangles.\n"
+"tscproc processes TSC's tile metadata files. It operates on one\n"
+"of the modes described below. Depending on the mode, different\n"
+"options can be passed to this programme.\n"
 "\n"
-"If read from standard input is requested, one of the options -P\n"
-"(assume PNG input) or -X (assume XML input) is required. Otherwise\n"
-"the operational mode is determined by looking at the file extension\n"
-"of the file given as input.\n"
+"MODES:\n"
+"\n"
+"  -M           Output a metadata XML file.\n"
+"  -P           Output a bbox PNG file.\n"
 "\n"
 "OPTIONS:\n"
 "\n"
 "  -a NAME:DESC  Add one <author> info with author name and\n"
 "                detailed description. Only used if input is\n"
-"                a PNG file. Can be passed multiple times.\n"
-"  -h            Print this help.\n"
-"  -i INPUT      Input file. Pass - for standard input.\n"
-"  -o OUTPUT     Output file. Pass - for standard output.\n"
-"  -P            Force input to be treated as a PNG file.\n"
-"  -t ROWS:COLS  If the input is a PNG file, this option gives\n"
+"                a PNG file. Can be passed multiple times. (only -M)\n"
+"  -c FILE       Collision box PNG file.\n"
+"  -d ROWS:COLS  If the input is a PNG file, this option gives\n"
 "                the number of rows and columns the tileset has,\n"
-"                in numbers of tiles.\n"
-" -X             Force input to be treated as an XML file.\n";
+"                in numbers of tiles. (only -M)\n"
+"  -h            Print this help.\n"
+"  -t FILE       Tileset PNG file. Pass - for standard input. (only -P)\n"
+"  -x FILE       Metadata XML file. Pass - for standard output.\n";
     exit(3);
 }
 
@@ -49,14 +46,14 @@ void parse_commandline(int argc, char* argv[])
 {
     cmdline.htiles = 0;
     cmdline.vtiles = 0;
-    bool mode_known = false;
+    cmdline.mode   = cmdmode::none;
 
     for(int i=1; i < argc; i++) {
         string arg = string(argv[i]);
 
         if (arg[0] == '-') { // Option
             switch (arg[1]) {
-            case 't':
+            case 'd':
                 if (i + 1 >= argc)
                     print_help();
                 else {
@@ -75,35 +72,41 @@ void parse_commandline(int argc, char* argv[])
                     cmdline.authors[authorstr.substr(0, delim)] = authorstr.substr(delim+1);
                 }
                 break;
-            case 'i':
+            case 't':
                 if (i + 1 >= argc)
                     print_help();
 
-                cmdline.infile = argv[++i];
+                cmdline.tilesetfile = argv[++i];
 
-                // stdin is used if infile is empty
-                if (cmdline.infile == "-")
-                    cmdline.infile.clear();
+                if (cmdline.tilesetfile == "-")
+                    cmdline.tilesetfile.clear();
 
                 break;
-            case 'o':
+            case 'x':
                 if (i + 1 >= argc)
                     print_help();
 
-                cmdline.outfile = argv[++i];
+                cmdline.xmlfile = argv[++i];
 
-                // stdout is used if outfile is empty
-                if (cmdline.outfile == "-")
-                    cmdline.outfile.clear();
+                if (cmdline.xmlfile == "-")
+                    cmdline.xmlfile.clear();
+
+                break;
+            case 'c':
+                if (i + 1 >= argc)
+                    print_help();
+
+                cmdline.collfile = argv[++i];
+
+                if (cmdline.collfile == "-")
+                    cmdline.collfile.clear();
 
                 break;
             case 'P':
-                cmdline.input_is_png = true;
-                mode_known = true;
+                cmdline.mode = cmdmode::png;
                 break;
-            case 'X':
-                cmdline.input_is_png = false;
-                mode_known = true;
+            case 'M':
+                cmdline.mode = cmdmode::metadata;
                 break;
             case 'h':
                 print_help();
@@ -116,12 +119,8 @@ void parse_commandline(int argc, char* argv[])
         }
     }
 
-    if (mode_known)
-        return;
-    if (cmdline.infile.empty()) {
-        cerr << "If standard input is used as input, you have to pass either the -P or the -X option." << endl;
+    if (cmdline.mode == cmdmode::none) {
+        cerr << "No mode specified." << endl;
         print_help();
     }
-
-    cmdline.input_is_png = cmdline.infile.find(".png") != string::npos;
 }

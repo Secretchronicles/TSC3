@@ -3,12 +3,19 @@
 #include <string>
 #include <map>
 
+enum class cmdmode {
+    none = 0,
+    png,
+    metadata
+};
+
 struct cmdargs {
-    bool input_is_png;
     int htiles;
     int vtiles;
-    std::string infile;
-    std::string outfile;
+    std::string tilesetfile;
+    std::string collfile;
+    std::string xmlfile;
+    cmdmode mode;
     std::map<std::string, std::string> authors;
 };
 extern cmdargs cmdline;
