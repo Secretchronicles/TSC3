@@ -111,6 +111,9 @@ target_link_libraries(tscproc ${XercesC_LIBRARIES} ${PNG_LIBRARIES})
 install(TARGETS tsc
   DESTINATION ${CMAKE_INSTALL_BINDIR}
   COMPONENT base)
+install(PROGRAMS ${TSC_SOURCE_DIR}/tscproc/tscproc-gui.sh
+  DESTINATION ${CMAKE_INSTALL_BINDIR}
+  COMPONENT base)
 
 ########################################
 # Print summary
