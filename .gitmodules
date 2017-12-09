@@ -1,0 +1,3 @@
+[submodule "pathie"]
+	path = pathie
+	url = git://git.guelkerdev.de/pathie.git

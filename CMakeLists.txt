@@ -72,6 +72,8 @@ endif()
 ########################################
 # Dependencies
 
+add_subdirectory(pathie EXCLUDE_FROM_ALL)
+
 find_package(PNG REQUIRED)
 find_package(XercesC REQUIRED)
 find_package(SFML COMPONENTS window system REQUIRED)
@@ -103,7 +105,7 @@ file(GLOB_RECURSE tscproc_sources
 add_executable(tscproc ${tscproc_sources})
 add_executable(tsc ${tsc_sources})
 
-target_link_libraries(tsc ${SFML_LIBRARIES} ${XercesC_LIBRARIES})
+target_link_libraries(tsc ${SFML_LIBRARIES} ${XercesC_LIBRARIES} pathie)
 
 # Add tscproc's compilation options only here to not confuse the main
 # compilation of the 'tsc' target.
