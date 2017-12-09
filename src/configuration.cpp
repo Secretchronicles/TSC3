@@ -139,11 +139,20 @@ Configuration::Configuration(const Path& path)
         // A version compatibility check would go here.
 
         // Update version
-        game_version = to_string(TSC_VERSION_MAJOR) + "." + to_string(TSC_VERSION_MINOR) + "." + to_string(TSC_VERSION_PATCH);
+        game_version = to_string(TSC_VERSION_MAJOR) +
+                       "." +
+                       to_string(TSC_VERSION_MINOR) +
+                       "." +
+                       to_string(TSC_VERSION_PATCH);
     }
     else {
         // Configuration file does not exist, save default config to it.
-        game_version = to_string(TSC_VERSION_MAJOR) + "." + to_string(TSC_VERSION_MINOR) + "." + to_string(TSC_VERSION_PATCH);
+        game_version = to_string(TSC_VERSION_MAJOR) +
+                       "." +
+                       to_string(TSC_VERSION_MINOR) +
+                       "." +
+                       to_string(TSC_VERSION_PATCH);
+
         Save();
     }
 }
@@ -164,7 +173,8 @@ void Configuration::Save() const
     mp_path->parent().mktree();
 
     // LS = Load+Save
-    DOMImplementation* p_impl = DOMImplementationRegistry::getDOMImplementation(utf8_to_xstr("Core LS").get());
+    DOMImplementation* p_impl = DOMImplementationRegistry::getDOMImplementation(
+                                    utf8_to_xstr("Core LS").get());
     if (!p_impl) {
         warn("Xerces-C error on saving the configuration: no DOM Implemenation with Core+LS found");
         return;
