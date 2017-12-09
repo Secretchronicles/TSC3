@@ -1,0 +1,7 @@
+This directory exists as the compiler -I option directory for pathie,
+because Pathie's source layout is broken. It doesn't have a pathie/
+subdirectory inside include/ unless you invoke $ make install, which
+cmake doesn't do in a subdirectory build.
+
+Correct solution is to fix Pathie's source layout upstream. See
+<https://github.com/Quintus/pathie-cpp/issues/2>.
