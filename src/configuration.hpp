@@ -18,42 +18,36 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#include "application.hpp"
-#include "scenes/title_scene.hpp"
-#include <SFML/Window.hpp>
-#include <xercesc/util/PlatformUtils.hpp>
+#ifndef TSC_CONFIGURATION_HPP
+#define TSC_CONFIGURATION_HPP
+#include <string>
 
-using namespace TSC;
-using namespace std;
+namespace TSC {
 
-Application::Application(int argc, char* argv[])
-    : mp_window(nullptr)
-{
-    xercesc::XMLPlatformUtils::Initialize();
+    class Configuration {
+    public:
+        Configuration(std::string path);
+        ~Configuration();
+
+        inline std::string GetPath() { return m_path; }
+
+        // Actual configuration settings
+        std::string game_version;
+        int screen_width{640};
+        int screen_height{480};
+        int screen_bpp{32};
+        int music_volume{100};
+        int sound_volume{100};
+
+        bool enable_vsync{false};
+        bool enable_always_run{false};
+        bool enable_fullscreen{false};
+        bool enable_music{true};
+        bool enable_sound{true};
+    private:
+        std::string m_path;
+    };
+
 }
 
-Application::~Application()
-{
-    if (mp_window)
-        delete mp_window;
-
-    xercesc::XMLPlatformUtils::Terminate();
-}
-
-int Application::MainLoop()
-{
-    m_scene_stack.push(unique_ptr<TitleScene>(new TitleScene()));
-
-    // Game main loop
-    while (!m_scene_stack.empty()) {
-        unique_ptr<Scene>& p_scene = m_scene_stack.top();
-
-        // Allow a scene to destroy itself by returning false from update().
-        if (p_scene->Update())
-            p_scene->Draw();
-        else
-            m_scene_stack.pop();
-    }
-
-    return 0;
-}
+#endif /* TSC_CONFIGURATION_HPP */

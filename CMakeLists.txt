@@ -103,7 +103,7 @@ file(GLOB_RECURSE tscproc_sources
 add_executable(tscproc ${tscproc_sources})
 add_executable(tsc ${tsc_sources})
 
-target_link_libraries(tsc ${SFML_LIBRARIES})
+target_link_libraries(tsc ${SFML_LIBRARIES} ${XercesC_LIBRARIES})
 
 # Add tscproc's compilation options only here to not confuse the main
 # compilation of the 'tsc' target.

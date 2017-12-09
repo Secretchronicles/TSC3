@@ -18,42 +18,34 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#include "application.hpp"
-#include "scenes/title_scene.hpp"
-#include <SFML/Window.hpp>
-#include <xercesc/util/PlatformUtils.hpp>
+#include "xerces_helpers.hpp"
+#include <xercesc/util/TransService.hpp>
+#include <cstring>
 
-using namespace TSC;
+using namespace xercesc;
 using namespace std;
 
-Application::Application(int argc, char* argv[])
-    : mp_window(nullptr)
+/**
+ * Converts the given Xerces-C string into a UTF-8 string.
+ */
+string TSC::xstr_to_utf8(const XMLCh* xstr)
 {
-    xercesc::XMLPlatformUtils::Initialize();
+    TranscodeToStr transcoder(xstr, "UTF-8");
+    return string(reinterpret_cast<const char*>(transcoder.str()));
 }
 
-Application::~Application()
+/**
+ * Converts the given UTF-8 string into a Xerces-C string.
+ * The return value of this method is guaranteed to have
+ * a terminal NUL.
+ */
+unique_ptr<XMLCh[]> TSC::utf8_to_xstr(const std::string& utf8)
 {
-    if (mp_window)
-        delete mp_window;
+    TranscodeFromStr transcoder(reinterpret_cast<const XMLByte*>(utf8.c_str()), utf8.length(), "UTF-8");
+    unique_ptr<XMLCh[]> buf(new XMLCh[transcoder.length()+1]);
 
-    xercesc::XMLPlatformUtils::Terminate();
-}
+    memset(buf.get(), '\0', sizeof(XMLCh) * (transcoder.length() + 1));
+    memcpy(buf.get(), transcoder.str(), sizeof(XMLCh) * transcoder.length());
 
-int Application::MainLoop()
-{
-    m_scene_stack.push(unique_ptr<TitleScene>(new TitleScene()));
-
-    // Game main loop
-    while (!m_scene_stack.empty()) {
-        unique_ptr<Scene>& p_scene = m_scene_stack.top();
-
-        // Allow a scene to destroy itself by returning false from update().
-        if (p_scene->Update())
-            p_scene->Draw();
-        else
-            m_scene_stack.pop();
-    }
-
-    return 0;
+    return buf;
 }

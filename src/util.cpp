@@ -18,42 +18,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#include "application.hpp"
-#include "scenes/title_scene.hpp"
-#include <SFML/Window.hpp>
-#include <xercesc/util/PlatformUtils.hpp>
+#include "util.hpp"
+#include <iostream>
 
-using namespace TSC;
 using namespace std;
 
-Application::Application(int argc, char* argv[])
-    : mp_window(nullptr)
+void TSC::warn(const std::string& msg)
 {
-    xercesc::XMLPlatformUtils::Initialize();
-}
-
-Application::~Application()
-{
-    if (mp_window)
-        delete mp_window;
-
-    xercesc::XMLPlatformUtils::Terminate();
-}
-
-int Application::MainLoop()
-{
-    m_scene_stack.push(unique_ptr<TitleScene>(new TitleScene()));
-
-    // Game main loop
-    while (!m_scene_stack.empty()) {
-        unique_ptr<Scene>& p_scene = m_scene_stack.top();
-
-        // Allow a scene to destroy itself by returning false from update().
-        if (p_scene->Update())
-            p_scene->Draw();
-        else
-            m_scene_stack.pop();
-    }
-
-    return 0;
+    cerr << "Warning: " << msg << endl;
 }
