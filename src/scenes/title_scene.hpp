@@ -18,18 +18,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#include "application.hpp"
-#include <locale>
+#ifndef TSC_TITLE_SCENE_HPP
+#define TSC_TITLE_SCENE_HPP
+#include "scene.hpp"
 
-using namespace TSC;
-using namespace std;
+namespace TSC {
 
-/// Entry point to the programme.
-int main(int argc, char* argv[])
-{
-    // Set to environment locale
-    locale::global(locale(""));
+    class TitleScene: public Scene {
+        virtual bool Update();
+        virtual void Draw() const;
+    };
 
-    Application app(argc, argv);
-    return app.MainLoop();
 }
+
+#endif /* TSC_TITLE_SCENE_HPP */

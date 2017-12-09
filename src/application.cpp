@@ -19,17 +19,38 @@
  ******************************************************************************/
 
 #include "application.hpp"
-#include <locale>
+#include "scenes/title_scene.hpp"
+#include <SFML/Window.hpp>
 
 using namespace TSC;
 using namespace std;
 
-/// Entry point to the programme.
-int main(int argc, char* argv[])
+Application::Application(int argc, char* argv[])
+    : mp_window(nullptr)
 {
-    // Set to environment locale
-    locale::global(locale(""));
+    // TODO
+}
 
-    Application app(argc, argv);
-    return app.MainLoop();
+Application::~Application()
+{
+    if (mp_window)
+        delete mp_window;
+}
+
+int Application::MainLoop()
+{
+    m_scene_stack.push(unique_ptr<TitleScene>(new TitleScene()));
+
+    // Game main loop
+    while (!m_scene_stack.empty()) {
+        unique_ptr<Scene>& p_scene = m_scene_stack.top();
+
+        // Allow a scene to destroy itself by returning false from update().
+        if (p_scene->Update())
+            p_scene->Draw();
+        else
+            m_scene_stack.pop();
+    }
+
+    return 0;
 }

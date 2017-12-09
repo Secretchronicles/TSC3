@@ -18,18 +18,41 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#include "application.hpp"
-#include <locale>
+#ifndef TSC_APPLICATION_HPP
+#define TSC_APPLICATION_HPP
+#include <memory>
+#include <stack>
 
-using namespace TSC;
-using namespace std;
-
-/// Entry point to the programme.
-int main(int argc, char* argv[])
-{
-    // Set to environment locale
-    locale::global(locale(""));
-
-    Application app(argc, argv);
-    return app.MainLoop();
+// forward-declare
+namespace sf {
+    class Window;
 }
+
+namespace TSC {
+
+    // forward-declare
+    class Scene;
+
+    class Application {
+    public:
+        Application(int argc, char* argv[]);
+        ~Application();
+
+        inline const sf::Window& GetWindow()
+        {
+            return *mp_window;
+        }
+
+        int MainLoop();
+
+        std::unique_ptr<Scene> PopScene();
+        void PushScene(std::unique_ptr<Scene> p_scene);
+
+    private:
+        sf::Window* mp_window;
+        std::stack<std::unique_ptr<Scene>> m_scene_stack;
+    };
+
+}
+
+#endif /* TSC_APPLICATION_HPP */

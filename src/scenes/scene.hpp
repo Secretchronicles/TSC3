@@ -18,18 +18,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#include "application.hpp"
-#include <locale>
+#ifndef TSC_SCENE_HPP
+#define TSC_SCENE_HPP
 
-using namespace TSC;
-using namespace std;
+namespace TSC {
 
-/// Entry point to the programme.
-int main(int argc, char* argv[])
-{
-    // Set to environment locale
-    locale::global(locale(""));
+    class Scene {
+    public:
+        Scene() {}
+        virtual ~Scene() {}
 
-    Application app(argc, argv);
-    return app.MainLoop();
+        /**
+         * Update() shall update all logic in the scene, but not
+         * draw anything onto the screen. Returning false from this
+         * method causes the main loop to pop the scene from the
+         * scene stack without a subsequent call to Draw().
+         */
+        virtual bool Update() = 0;
+        /// Draw() shall draw the updated scene onto the screen.
+        /// Game logic updates should be in Update().
+        virtual void Draw() const = 0;
+    };
+
 }
+
+#endif /* TSC_SCENE_HPP */
