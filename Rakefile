@@ -18,7 +18,7 @@
 
 require "rake"
 
-desc "Reformat the according to the TSC style conventions (requires astyle)."
+desc "Reformat the code according to the TSC style conventions (requires astyle)."
 task :format do
   sources = FileList["src/**/*.hpp", "src/**/*.cpp"]
   sh "astyle " +
