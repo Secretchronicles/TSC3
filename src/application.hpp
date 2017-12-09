@@ -33,6 +33,7 @@ namespace TSC {
     // forward-declare
     class Scene;
     class Configuration;
+    class Pathmap;
 
     class Application {
     public:
@@ -52,6 +53,7 @@ namespace TSC {
     private:
         sf::Window* mp_window;
         Configuration* mp_config;
+        Pathmap* mp_pathmap;
         std::stack<std::unique_ptr<Scene>> m_scene_stack;
     };
 

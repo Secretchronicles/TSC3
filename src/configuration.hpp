@@ -22,6 +22,11 @@
 #define TSC_CONFIGURATION_HPP
 #include <string>
 
+// forward-declare
+namespace Pathie {
+    class Path;
+}
+
 namespace TSC {
 
     /**
@@ -29,15 +34,17 @@ namespace TSC {
      */
     class Configuration {
     public:
-        Configuration(std::string path);
+        Configuration(const Pathie::Path& path);
         ~Configuration();
 
-        inline std::string GetPath()
+        void Save() const;
+        inline const Pathie::Path& GetPath()
         {
-            return m_path;
+            return *mp_path;
         }
 
-        // Actual configuration settings
+        // Actual configuration settings.
+        // The values in braces denote the default configuration values.
         std::string game_version;
         int screen_width{640};
         int screen_height{480};
@@ -51,7 +58,7 @@ namespace TSC {
         bool enable_music{true};
         bool enable_sound{true};
     private:
-        std::string m_path;
+        const Pathie::Path* mp_path;
     };
 
 }

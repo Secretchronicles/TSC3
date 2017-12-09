@@ -30,12 +30,13 @@ using namespace std;
 
 Application::Application(int argc, char* argv[])
     : mp_window(nullptr),
-      mp_config(nullptr)
+      mp_config(nullptr),
+      mp_pathmap(nullptr)
 {
     xercesc::XMLPlatformUtils::Initialize();
 
-    Pathmap p;
-    mp_config = new Configuration(p.GetConfigPath().utf8_str());
+    mp_pathmap = new Pathmap();
+    mp_config = new Configuration(mp_pathmap->GetConfigPath());
 }
 
 Application::~Application()
@@ -44,6 +45,8 @@ Application::~Application()
         delete mp_window;
     if (mp_config)
         delete mp_config;
+    if (mp_pathmap)
+        delete mp_pathmap;
 
     xercesc::XMLPlatformUtils::Terminate();
 }

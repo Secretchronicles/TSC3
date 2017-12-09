@@ -19,16 +19,28 @@
  ******************************************************************************/
 
 #include "configuration.hpp"
+#include "config.hpp"
 #include "util.hpp"
 #include "xerces_helpers.hpp"
+#include <pathie/path.hpp>
 #include <xercesc/sax2/DefaultHandler.hpp>
 #include <xercesc/sax2/SAX2XMLReader.hpp>
 #include <xercesc/sax2/Attributes.hpp>
 #include <xercesc/sax2/XMLReaderFactory.hpp>
 #include <xercesc/framework/LocalFileInputSource.hpp>
+#include <xercesc/framework/LocalFileFormatTarget.hpp>
+#include <xercesc/dom/DOMImplementation.hpp>
+#include <xercesc/dom/DOMImplementationRegistry.hpp>
+#include <xercesc/dom/DOMElement.hpp>
+#include <xercesc/dom/DOMText.hpp>
+#include <xercesc/dom/DOMDocument.hpp>
+#include <xercesc/dom/DOMLSSerializer.hpp>
+#include <xercesc/dom/DOMLSOutput.hpp>
+#include <xercesc/dom/DOMConfiguration.hpp>
 
 using namespace TSC;
 using namespace xercesc;
+using namespace Pathie;
 using namespace std;
 
 namespace {
@@ -84,6 +96,9 @@ namespace {
                 else if (mr_config.sound_volume > 100)
                     mr_config.sound_volume = 100;
             }
+            else if (localname == "configuration") {
+                // Ignore root node
+            }
             else {
                 warn(string("Ignoring unknown configuration parameter: ") + localname);
             }
@@ -107,20 +122,128 @@ namespace {
  *
  * `path` is expected to be encoded in UTF-8.
  */
-Configuration::Configuration(string path)
-    : m_path(path)
+Configuration::Configuration(const Path& path)
+    : mp_path(new Path(path))
 {
-    SAX2XMLReader* p_reader = XMLReaderFactory::createXMLReader();
-    p_reader->setFeature(XMLUni::fgSAX2CoreValidation, false);
+    if (mp_path->exists()) {
+        SAX2XMLReader* p_reader = XMLReaderFactory::createXMLReader();
+        p_reader->setFeature(XMLUni::fgSAX2CoreValidation, false);
 
-    ConfigurationHandler handler(*this);
-    p_reader->setContentHandler(&handler);
-    p_reader->setErrorHandler(&handler);
+        ConfigurationHandler handler(*this);
+        p_reader->setContentHandler(&handler);
+        p_reader->setErrorHandler(&handler);
 
-    LocalFileInputSource source(utf8_to_xstr(path).get());
-    p_reader->parse(source);
+        LocalFileInputSource source(utf8_to_xstr(path.utf8_str()).get());
+        p_reader->parse(source);
+
+        // A version compatibility check would go here.
+
+        // Update version
+        game_version = to_string(TSC_VERSION_MAJOR) + "." + to_string(TSC_VERSION_MINOR) + "." + to_string(TSC_VERSION_PATCH);
+    }
+    else {
+        // Configuration file does not exist, save default config to it.
+        game_version = to_string(TSC_VERSION_MAJOR) + "." + to_string(TSC_VERSION_MINOR) + "." + to_string(TSC_VERSION_PATCH);
+        Save();
+    }
 }
 
 Configuration::~Configuration()
 {
+    Save();
+    delete mp_path;
+}
+
+/**
+ * Save the configuration in its current state into the configuration
+ * file that was specified in the constructor. If the directory
+ * for the configuration file does not exist, it is created.
+ */
+void Configuration::Save() const
+{
+    mp_path->parent().mktree();
+
+    // LS = Load+Save
+    DOMImplementation* p_impl = DOMImplementationRegistry::getDOMImplementation(utf8_to_xstr("Core LS").get());
+    if (!p_impl) {
+        warn("Xerces-C error on saving the configuration: no DOM Implemenation with Core+LS found");
+        return;
+    }
+
+    // Create the DOM tree
+    DOMDocument* p_doc = p_impl->createDocument(nullptr, utf8_to_xstr("configuration").get(), NULL);
+    DOMElement* p_root = p_doc->getDocumentElement();
+
+    p_doc->setXmlStandalone(true);
+
+    DOMElement* p_child = p_doc->createElement(utf8_to_xstr("game_version").get());
+    DOMText* p_text = p_doc->createTextNode(utf8_to_xstr(game_version).get());
+    p_child->appendChild(p_text);
+    p_root->appendChild(p_child);
+
+    p_child = p_doc->createElement(utf8_to_xstr("screen_width").get());
+    p_text = p_doc->createTextNode(utf8_to_xstr(to_string(screen_width)).get());
+    p_child->appendChild(p_text);
+    p_root->appendChild(p_child);
+
+    p_child = p_doc->createElement(utf8_to_xstr("screen_height").get());
+    p_text = p_doc->createTextNode(utf8_to_xstr(to_string(screen_height)).get());
+    p_child->appendChild(p_text);
+    p_root->appendChild(p_child);
+
+    p_child = p_doc->createElement(utf8_to_xstr("screen_bpp").get());
+    p_text = p_doc->createTextNode(utf8_to_xstr(to_string(screen_bpp)).get());
+    p_child->appendChild(p_text);
+    p_root->appendChild(p_child);
+
+    p_child = p_doc->createElement(utf8_to_xstr("music_volume").get());
+    p_text = p_doc->createTextNode(utf8_to_xstr(to_string(music_volume)).get());
+    p_child->appendChild(p_text);
+    p_root->appendChild(p_child);
+
+    p_child = p_doc->createElement(utf8_to_xstr("sound_volume").get());
+    p_text = p_doc->createTextNode(utf8_to_xstr(to_string(sound_volume)).get());
+    p_child->appendChild(p_text);
+    p_root->appendChild(p_child);
+
+    p_child = p_doc->createElement(utf8_to_xstr("enable_vsync").get());
+    p_text = p_doc->createTextNode(utf8_to_xstr(enable_vsync ? "yes" : "no").get());
+    p_child->appendChild(p_text);
+    p_root->appendChild(p_child);
+
+    p_child = p_doc->createElement(utf8_to_xstr("enable_always_run").get());
+    p_text = p_doc->createTextNode(utf8_to_xstr(enable_always_run ? "yes" : "no").get());
+    p_child->appendChild(p_text);
+    p_root->appendChild(p_child);
+
+    p_child = p_doc->createElement(utf8_to_xstr("enable_fullscreen").get());
+    p_text = p_doc->createTextNode(utf8_to_xstr(enable_fullscreen ? "yes" : "no").get());
+    p_child->appendChild(p_text);
+    p_root->appendChild(p_child);
+
+    p_child = p_doc->createElement(utf8_to_xstr("enable_music").get());
+    p_text = p_doc->createTextNode(utf8_to_xstr(enable_music ? "yes" : "no").get());
+    p_child->appendChild(p_text);
+    p_root->appendChild(p_child);
+
+    p_child = p_doc->createElement(utf8_to_xstr("enable_sound").get());
+    p_text = p_doc->createTextNode(utf8_to_xstr(enable_sound ? "yes" : "no").get());
+    p_child->appendChild(p_text);
+    p_root->appendChild(p_child);
+
+    // Write it out to disk
+    LocalFileFormatTarget target(utf8_to_xstr(mp_path->utf8_str()).get());
+    DOMLSSerializer* p_serializer = p_impl->createLSSerializer();
+    DOMLSOutput*     p_output     = p_impl->createLSOutput();
+
+    DOMConfiguration* p_serialconfig = p_serializer->getDomConfig();
+    p_serialconfig->setParameter(XMLUni::fgDOMWRTFormatPrettyPrint, true);
+    p_serializer->setNewLine(utf8_to_xstr("\n").get());
+
+    p_output->setByteStream(&target);
+    p_serializer->write(p_doc, p_output);
+
+    p_output->release();
+    p_serializer->release();
+    p_doc->release();
 }
