@@ -14,7 +14,7 @@ Formatting Rules
 
 This section describes the general style used in TSC's codebase. It's
 loosely related to the [Stroustrup style][1], but doesn't exactly
-match it. If this section leaves any questions open, you should refer
+match it. If this document leaves any questions open, you should refer
 to the Stroustrup style.
 
 Note that for Emacs an appropriate style file is already provided in
@@ -153,7 +153,7 @@ principle and still allows the compiler to optimize the method call
 away:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-class cFoo {
+class Foo {
 public:
     inline int GetBar(){ return m_bar; }
     inline void SetBar(int x){ m_bar = x; }
