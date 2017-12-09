@@ -43,51 +43,51 @@ namespace {
                                   const XMLCh* const,
                                   const XMLCh* const,
                                   const Attributes&)
-            {
-                m_chars.clear();
-            }
+        {
+            m_chars.clear();
+        }
 
         virtual void endElement(const XMLCh* const,
                                 const XMLCh* const xlocalname,
                                 const XMLCh* const)
-            {
-                string localname = xstr_to_utf8(xlocalname);
-                if (localname == "game_version")
-                    mr_config.game_version = m_chars;
-                else if (localname == "screen_width")
-                    mr_config.screen_width = stoi(m_chars);
-                else if (localname == "screen_height")
-                    mr_config.screen_height = stoi(m_chars);
-                else if (localname == "screen_bpp")
-                    mr_config.screen_bpp = stoi(m_chars);
-                else if (localname == "enable_vsync")
-                    mr_config.enable_vsync = m_chars == "yes";
-                else if (localname == "enable_always_run")
-                    mr_config.enable_always_run = m_chars == "yes";
-                else if (localname == "enable_fullscreen")
-                    mr_config.enable_fullscreen = m_chars == "yes";
-                else if (localname == "enable_music")
-                    mr_config.enable_music = m_chars == "yes";
-                else if (localname == "enable_sound")
-                    mr_config.enable_sound = m_chars == "yes";
-                else if (localname == "music_volume") {
-                    mr_config.music_volume = stoi(m_chars);
-                    if (mr_config.music_volume < 0)
-                        mr_config.music_volume = 0;
-                    else if (mr_config.music_volume > 100)
-                        mr_config.music_volume = 100;
-                }
-                else if (localname == "sound_volume") {
-                    mr_config.sound_volume = stoi(m_chars);
-                    if (mr_config.sound_volume < 0)
-                        mr_config.sound_volume = 0;
-                    else if (mr_config.sound_volume > 100)
-                        mr_config.sound_volume = 100;
-                }
-                else {
-                    warn(string("Ignoring unknown configuration parameter: ") + localname);
-                }
+        {
+            string localname = xstr_to_utf8(xlocalname);
+            if (localname == "game_version")
+                mr_config.game_version = m_chars;
+            else if (localname == "screen_width")
+                mr_config.screen_width = stoi(m_chars);
+            else if (localname == "screen_height")
+                mr_config.screen_height = stoi(m_chars);
+            else if (localname == "screen_bpp")
+                mr_config.screen_bpp = stoi(m_chars);
+            else if (localname == "enable_vsync")
+                mr_config.enable_vsync = m_chars == "yes";
+            else if (localname == "enable_always_run")
+                mr_config.enable_always_run = m_chars == "yes";
+            else if (localname == "enable_fullscreen")
+                mr_config.enable_fullscreen = m_chars == "yes";
+            else if (localname == "enable_music")
+                mr_config.enable_music = m_chars == "yes";
+            else if (localname == "enable_sound")
+                mr_config.enable_sound = m_chars == "yes";
+            else if (localname == "music_volume") {
+                mr_config.music_volume = stoi(m_chars);
+                if (mr_config.music_volume < 0)
+                    mr_config.music_volume = 0;
+                else if (mr_config.music_volume > 100)
+                    mr_config.music_volume = 100;
             }
+            else if (localname == "sound_volume") {
+                mr_config.sound_volume = stoi(m_chars);
+                if (mr_config.sound_volume < 0)
+                    mr_config.sound_volume = 0;
+                else if (mr_config.sound_volume > 100)
+                    mr_config.sound_volume = 100;
+            }
+            else {
+                warn(string("Ignoring unknown configuration parameter: ") + localname);
+            }
+        }
 
         virtual void characters(const XMLCh* const chars, const XMLSize_t)
         {

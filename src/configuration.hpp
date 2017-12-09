@@ -32,7 +32,10 @@ namespace TSC {
         Configuration(std::string path);
         ~Configuration();
 
-        inline std::string GetPath() { return m_path; }
+        inline std::string GetPath()
+        {
+            return m_path;
+        }
 
         // Actual configuration settings
         std::string game_version;
