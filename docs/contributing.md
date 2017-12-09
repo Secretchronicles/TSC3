@@ -252,6 +252,27 @@ namespace TSC {
 Note that it's perfectly possible to forward-declare `enum`
 statements.
 
+Conversely, the very first action in your corresponding
+implementation file should be the inclusion of the corresponding
+header file. This ensures that your header really is feature-complete,
+because the compiler will complain otherwise. The order of `#include`
+statements should then be:
+
+1. Corresponding header for your implementation file
+2. Other TSC headers
+3. External libraries' headers
+4. C++ STL headers
+
+Example for the implementation file corresponding to the above header
+file example:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+#include "myheader.hpp"      // Corresponding header
+#include "complex_thing.hpp" // Other TSC header
+#include <SFML/Window.hpp>   // External lib header
+#include <vector>            // C++ STL header
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 ### Namespaces ###
 
 All TSC code is required to be defined under the `TSC` namespace. In
