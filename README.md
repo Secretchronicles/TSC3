@@ -18,21 +18,13 @@ This repository contains the rewrite that will eventually become TSC
 version 3.0.0. The current stable TSC 2 is available at
 <https://github.com/Secretchronicles/TSC>.
 
-How to install?
----------------
-
-Releases are published precompiled for Windows at the website. If you
-want to compile TSC yourself, please see the [INSTALL.md](INSTALL.md) file.
-
 Links
 -----
 
 * The TSC website: <https://secretchronicles.org>
 * The mailinglists: <https://lists.secretchronicles.org/postorius/lists/>
 * The forums: <https://lists.secretchronicles.org/hyperkitty/>
-* The wiki: <https://wiki.secretchronicles.org>
 * The bugtracker: <https://github.com/Secretchronicles/TSC/issues>
-* The documentation: <https://secretchronicles.org/en/documentation>
 
 Contributing
 ------------
@@ -43,12 +35,13 @@ please consider the following:
 
 * You have to be familiar with at least the basics of using the Git
   version control system. This can be achieved by reading the first
-  two chapters of [this great online Git
-  book](http://git-scm.com/book). Also reading chapter 3 is highly
+  two chapters of the Git book available for free at
+  <http://git-scm.com/book>. Also reading chapter 3 is highly
   recommended as we use branches all the time.
-* If you want to contribute code, please read [the coding
-  conventions document](https://secretchronicles.org/docs/2.0.0/cpp/md_docs_pages_conventions.html)
-* If you want to contribute artistic work, please read [the styleguide](https://wiki.secretchronicles.org/StyleGuide.html)
+* If you want to contribute code, please read the coding conventions
+  document in the directory docs/contributing.md.
+* If you want to contribute artistic work, please read
+  <https://wiki.secretchronicles.org/StyleGuide.html>
 * If you specifically target issues from the issue tracker, please
   use “fixes #43” for bug tickets you fix and “closes #43” for other
   tickets you resolve as part of the message in your commits. This
@@ -69,6 +62,7 @@ License
 -------
 
 TSC is a 2-dimensional platform game.
+
 Copyright © 2017 The TSC Contributors
 
 This program is free software: you can redistribute it and/or modify
