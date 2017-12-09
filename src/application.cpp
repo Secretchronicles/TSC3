@@ -19,6 +19,8 @@
  ******************************************************************************/
 
 #include "application.hpp"
+#include "pathmap.hpp"
+#include "configuration.hpp"
 #include "scenes/title_scene.hpp"
 #include <SFML/Window.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
@@ -27,15 +29,21 @@ using namespace TSC;
 using namespace std;
 
 Application::Application(int argc, char* argv[])
-    : mp_window(nullptr)
+    : mp_window(nullptr),
+      mp_config(nullptr)
 {
     xercesc::XMLPlatformUtils::Initialize();
+
+    Pathmap p;
+    mp_config = new Configuration(p.GetConfigPath().utf8_str());
 }
 
 Application::~Application()
 {
     if (mp_window)
         delete mp_window;
+    if (mp_config)
+        delete mp_config;
 
     xercesc::XMLPlatformUtils::Terminate();
 }

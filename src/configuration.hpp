@@ -24,6 +24,9 @@
 
 namespace TSC {
 
+    /**
+     * This class encapsulates handling of TSC's configuration file.
+     */
     class Configuration {
     public:
         Configuration(std::string path);

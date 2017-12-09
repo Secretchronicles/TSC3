@@ -40,9 +40,9 @@ namespace {
         }
 
         virtual void startElement(const XMLCh* const,
-                                  const XMLCh* const xlocalname,
                                   const XMLCh* const,
-                                  const Attributes& attrs)
+                                  const XMLCh* const,
+                                  const Attributes&)
             {
                 m_chars.clear();
             }
@@ -104,6 +104,8 @@ namespace {
  * Constructs a new Configuration instance that reads the configuration from
  * the passed file. The file is immediately parsed in the constructor, which
  * hence might throw exceptions just as Xerces-C does.
+ *
+ * `path` is expected to be encoded in UTF-8.
  */
 Configuration::Configuration(string path)
     : m_path(path)
