@@ -27,6 +27,8 @@ using namespace std;
 
 /**
  * Converts the given Xerces-C string into a UTF-8 string.
+ *
+ * \see X2U() macro.
  */
 string TSC::xstr_to_utf8(const XMLCh* xstr)
 {
@@ -38,6 +40,8 @@ string TSC::xstr_to_utf8(const XMLCh* xstr)
  * Converts the given UTF-8 string into a Xerces-C string.
  * The return value of this method is guaranteed to have
  * a terminal NUL.
+ *
+ * \see U2X() macro.
  */
 unique_ptr<XMLCh[]> TSC::utf8_to_xstr(const std::string& utf8)
 {

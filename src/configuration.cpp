@@ -63,7 +63,7 @@ namespace {
                                 const XMLCh* const xlocalname,
                                 const XMLCh* const)
         {
-            string localname = xstr_to_utf8(xlocalname);
+            string localname = X2U(xlocalname);
             if (localname == "game_version")
                 mr_config.game_version = m_chars;
             else if (localname == "screen_width")
@@ -106,7 +106,7 @@ namespace {
 
         virtual void characters(const XMLCh* const chars, const XMLSize_t)
         {
-            m_chars.append(xstr_to_utf8(chars));
+            m_chars.append(X2U(chars));
         }
 
     private:
@@ -133,7 +133,7 @@ Configuration::Configuration(const Path& path)
         p_reader->setContentHandler(&handler);
         p_reader->setErrorHandler(&handler);
 
-        LocalFileInputSource source(utf8_to_xstr(path.utf8_str()).get());
+        LocalFileInputSource source(U2X(path.utf8_str()));
         p_reader->parse(source);
 
         // A version compatibility check would go here.
@@ -174,81 +174,81 @@ void Configuration::Save() const
 
     // LS = Load+Save
     DOMImplementation* p_impl = DOMImplementationRegistry::getDOMImplementation(
-                                    utf8_to_xstr("Core LS").get());
+                                    U2X("Core LS"));
     if (!p_impl) {
         warn("Xerces-C error on saving the configuration: no DOM Implemenation with Core+LS found");
         return;
     }
 
     // Create the DOM tree
-    DOMDocument* p_doc = p_impl->createDocument(nullptr, utf8_to_xstr("configuration").get(), NULL);
+    DOMDocument* p_doc = p_impl->createDocument(nullptr, U2X("configuration"), NULL);
     DOMElement* p_root = p_doc->getDocumentElement();
 
     p_doc->setXmlStandalone(true);
 
-    DOMElement* p_child = p_doc->createElement(utf8_to_xstr("game_version").get());
-    DOMText* p_text = p_doc->createTextNode(utf8_to_xstr(game_version).get());
+    DOMElement* p_child = p_doc->createElement(U2X("game_version"));
+    DOMText* p_text = p_doc->createTextNode(U2X(game_version));
     p_child->appendChild(p_text);
     p_root->appendChild(p_child);
 
-    p_child = p_doc->createElement(utf8_to_xstr("screen_width").get());
-    p_text = p_doc->createTextNode(utf8_to_xstr(to_string(screen_width)).get());
+    p_child = p_doc->createElement(U2X("screen_width"));
+    p_text = p_doc->createTextNode(U2X(to_string(screen_width)));
     p_child->appendChild(p_text);
     p_root->appendChild(p_child);
 
-    p_child = p_doc->createElement(utf8_to_xstr("screen_height").get());
-    p_text = p_doc->createTextNode(utf8_to_xstr(to_string(screen_height)).get());
+    p_child = p_doc->createElement(U2X("screen_height"));
+    p_text = p_doc->createTextNode(U2X(to_string(screen_height)));
     p_child->appendChild(p_text);
     p_root->appendChild(p_child);
 
-    p_child = p_doc->createElement(utf8_to_xstr("screen_bpp").get());
-    p_text = p_doc->createTextNode(utf8_to_xstr(to_string(screen_bpp)).get());
+    p_child = p_doc->createElement(U2X("screen_bpp"));
+    p_text = p_doc->createTextNode(U2X(to_string(screen_bpp)));
     p_child->appendChild(p_text);
     p_root->appendChild(p_child);
 
-    p_child = p_doc->createElement(utf8_to_xstr("music_volume").get());
-    p_text = p_doc->createTextNode(utf8_to_xstr(to_string(music_volume)).get());
+    p_child = p_doc->createElement(U2X("music_volume"));
+    p_text = p_doc->createTextNode(U2X(to_string(music_volume)));
     p_child->appendChild(p_text);
     p_root->appendChild(p_child);
 
-    p_child = p_doc->createElement(utf8_to_xstr("sound_volume").get());
-    p_text = p_doc->createTextNode(utf8_to_xstr(to_string(sound_volume)).get());
+    p_child = p_doc->createElement(U2X("sound_volume"));
+    p_text = p_doc->createTextNode(U2X(to_string(sound_volume)));
     p_child->appendChild(p_text);
     p_root->appendChild(p_child);
 
-    p_child = p_doc->createElement(utf8_to_xstr("enable_vsync").get());
-    p_text = p_doc->createTextNode(utf8_to_xstr(enable_vsync ? "yes" : "no").get());
+    p_child = p_doc->createElement(U2X("enable_vsync"));
+    p_text = p_doc->createTextNode(U2X(enable_vsync ? "yes" : "no"));
     p_child->appendChild(p_text);
     p_root->appendChild(p_child);
 
-    p_child = p_doc->createElement(utf8_to_xstr("enable_always_run").get());
-    p_text = p_doc->createTextNode(utf8_to_xstr(enable_always_run ? "yes" : "no").get());
+    p_child = p_doc->createElement(U2X("enable_always_run"));
+    p_text = p_doc->createTextNode(U2X(enable_always_run ? "yes" : "no"));
     p_child->appendChild(p_text);
     p_root->appendChild(p_child);
 
-    p_child = p_doc->createElement(utf8_to_xstr("enable_fullscreen").get());
-    p_text = p_doc->createTextNode(utf8_to_xstr(enable_fullscreen ? "yes" : "no").get());
+    p_child = p_doc->createElement(U2X("enable_fullscreen"));
+    p_text = p_doc->createTextNode(U2X(enable_fullscreen ? "yes" : "no"));
     p_child->appendChild(p_text);
     p_root->appendChild(p_child);
 
-    p_child = p_doc->createElement(utf8_to_xstr("enable_music").get());
-    p_text = p_doc->createTextNode(utf8_to_xstr(enable_music ? "yes" : "no").get());
+    p_child = p_doc->createElement(U2X("enable_music"));
+    p_text = p_doc->createTextNode(U2X(enable_music ? "yes" : "no"));
     p_child->appendChild(p_text);
     p_root->appendChild(p_child);
 
-    p_child = p_doc->createElement(utf8_to_xstr("enable_sound").get());
-    p_text = p_doc->createTextNode(utf8_to_xstr(enable_sound ? "yes" : "no").get());
+    p_child = p_doc->createElement(U2X("enable_sound"));
+    p_text = p_doc->createTextNode(U2X(enable_sound ? "yes" : "no"));
     p_child->appendChild(p_text);
     p_root->appendChild(p_child);
 
     // Write it out to disk
-    LocalFileFormatTarget target(utf8_to_xstr(mp_path->utf8_str()).get());
+    LocalFileFormatTarget target(U2X(mp_path->utf8_str()));
     DOMLSSerializer* p_serializer = p_impl->createLSSerializer();
     DOMLSOutput*     p_output     = p_impl->createLSOutput();
 
     DOMConfiguration* p_serialconfig = p_serializer->getDomConfig();
     p_serialconfig->setParameter(XMLUni::fgDOMWRTFormatPrettyPrint, true);
-    p_serializer->setNewLine(utf8_to_xstr("\n").get());
+    p_serializer->setNewLine(U2X("\n"));
 
     p_output->setByteStream(&target);
     p_serializer->write(p_doc, p_output);

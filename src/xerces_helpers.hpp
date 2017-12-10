@@ -24,6 +24,13 @@
 #include <memory>
 #include <xercesc/util/XMLString.hpp>
 
+/* These two macros abbreviate the use of the xstr_to_utf8()
+ * and utf8_to_xstr() methods. Specifically X2U() is slightly
+ * different from calling utf8_to_xstr(), because it includes
+ * the call to get() on the returned std::unique_ptr(). */
+#define U2X(utf8) utf8_to_xstr(utf8).get()
+#define X2U(xstr) xstr_to_utf8(xstr)
+
 namespace TSC {
 
     std::string xstr_to_utf8(const XMLCh* xstr);
