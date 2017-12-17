@@ -362,11 +362,25 @@ the source code (including comments).
 The commit metadata should be valid, i.e. each commit should be
 attributed to the person who really authored the content. While this
 seems obvious, it isn’t that easy when you cope with someone who
-doesn’t know how to use git, e.g. artists. In this case, you have to
+doesn’t know how to use Git, e.g. artists. In this case, you have to
 ensure the commit is really attributed correctly to the artist, and
-not to you. You do this by commiting the content in question yourself,
-but use the `--author` option of the `git commit` command set to the
+not to you. You do this by committing the content in question yourself,
+but using the `--author` option of the `git commit` command set to the
 name and email address of the real contributor.
+
+Where there are multiple persons involved, ensure that each person
+receives its own commit as in Git a commit cannot have multiple
+authors. For example, if you want to add a tileset into the repository
+that contains graphics of multiple artists, you need to commit the
+tileset multiple times: first, with all graphics only from author A,
+second, with all graphics to be added from author B, then add in a
+third commit all those graphics from author C.
+
+Valid author metadata is very important. It allows to get a list of
+all persons who hold copyright on TSC by just issueing the following
+command:
+
+    $ git log '--pretty=%an <%ae>' | sort | uniq
 
 Signoff
 -------
