@@ -18,7 +18,6 @@
 #ifndef TSCPROC_COMMANDLINE_HPP
 #define TSCPROC_COMMANDLINE_HPP
 #include <string>
-#include <map>
 
 enum class cmdmode {
     none = 0,
@@ -33,7 +32,6 @@ struct cmdargs {
     std::string collfile;
     std::string xmlfile;
     cmdmode mode;
-    std::map<std::string, std::string> authors;
 };
 extern cmdargs cmdline;
 

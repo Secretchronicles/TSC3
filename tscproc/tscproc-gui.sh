@@ -27,8 +27,6 @@ colspec=$(zenity --forms\
 		 --add-entry=Columns \
 		 --separator=":")
 
-# TODO: Ask for authors (tscproc's -a option)
-
 ./tscproc -M -c "$colpng" -d $colspec -x metadata.xml
 
 exit 0

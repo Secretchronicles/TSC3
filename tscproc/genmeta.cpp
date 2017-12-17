@@ -156,9 +156,6 @@ static void output_xml(FILE* infile)
     if (bboxes.empty())
         cerr << "Warning: No collision rectangles found" << endl;
 
-    if (cmdline.authors.empty())
-        cerr << "Warning: No authors given. Pass at least one -a option." << endl;
-
     // Output goes to real file if passed, otherwise standard output.
     ofstream outfilefile;
     if (!cmdline.xmlfile.empty())
@@ -169,16 +166,6 @@ static void output_xml(FILE* infile)
             << "<tileset version=\"1.0\">" << endl
             << "  <cols>" << cmdline.htiles << "</cols>" << endl
             << "  <rows>" << cmdline.vtiles << "</rows>" << endl
-            << "  <authors>" << endl;
-
-    for(auto iter=cmdline.authors.begin(); iter != cmdline.authors.end(); iter++) {
-        outfile << "    <author>" << endl
-                << "      <name>" << iter->first << "</name>" << endl
-                << "      <detail>" << iter->second << "</detail>" << endl
-                << "    </author>" << endl;
-    }
-
-    outfile << "  </authors>" << endl
             << "  <tiles>" << endl;
 
     for(const bbox& box: bboxes) {

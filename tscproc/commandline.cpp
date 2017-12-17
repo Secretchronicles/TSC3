@@ -39,9 +39,6 @@ static void print_help()
 "\n"
 "OPTIONS:\n"
 "\n"
-"  -a NAME:DESC  Add one <author> info with author name and\n"
-"                detailed description. Only used if input is\n"
-"                a PNG file. Can be passed multiple times. (only -M)\n"
 "  -c FILE       Collision box PNG file.\n"
 "  -d ROWS:COLS  If the input is a PNG file, this option gives\n"
 "                the number of rows and columns the tileset has,\n"
@@ -78,15 +75,6 @@ void parse_commandline(int argc, char* argv[])
                     int delim      = tilestr.find(":");
                     cmdline.vtiles = stoi(tilestr.substr(0, delim));
                     cmdline.htiles = stoi(tilestr.substr(delim+1));
-                }
-                break;
-            case 'a':
-                if (i + 1 >= argc)
-                    print_help();
-                else {
-                    string authorstr = argv[++i];
-                    int delim = authorstr.find(":");
-                    cmdline.authors[authorstr.substr(0, delim)] = authorstr.substr(delim+1);
                 }
                 break;
             case 't':
