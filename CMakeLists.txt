@@ -57,7 +57,15 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # General compiler flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wl,--as-needed")
+# -Wall: Give warnings
+# -Wextra: Give more warnings
+# -Wl,--as-needed: Linker should treat static libraries more like shread ones
+# -finput-charset=UTF-8: Tell GCC that all source code files are encoded in UTF-8.
+#                        This obviates the need to use the "u8" prefix on all the strings.
+# -fexec-charset=UTF-8: Tell GCC to store all literal strings as UTF-8 in the executable.
+#                       (Would have no effect on u8 prefixed strings as that's required by
+#                       the C++ standard for them)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wl,--as-needed -finput-charset=UTF-8 -fexec-charset=UTF-8")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-inline")
 
 # Find out the host triplet if we are crosscompiling.
