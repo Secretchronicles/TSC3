@@ -9,6 +9,8 @@ namespace TSC {
         Pathmap();
 
         Pathie::Path GetConfigPath() const;
+        Pathie::Path GetDataPath() const;
+        Pathie::Path GetPixmaspPath() const;
     };
 
 }

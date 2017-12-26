@@ -35,8 +35,8 @@
 // Indicate where the "make install" step put its data to.
 // The value of these macros is ignored on Windows, where
 // the TSC data directory is determined relative to
-// the `tsc' executable.
+// the `tsc' executable. The values are absolute pathes.
 #define INSTALL_PREFIX  "@CMAKE_INSTALL_PREFIX@"
-#define INSTALL_DATADIR "@CMAKE_INSTALL_DATADIR@"
+#define INSTALL_DATADIR "@CMAKE_INSTALL_FULL_DATADIR@"
 
 #endif
