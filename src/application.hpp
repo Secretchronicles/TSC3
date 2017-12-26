@@ -45,6 +45,11 @@ namespace TSC {
             return *mp_window;
         }
 
+        inline const Pathmap& GetPathmap()
+        {
+            return *mp_pathmap;
+        }
+
         int MainLoop();
 
         std::unique_ptr<Scene> PopScene();
@@ -56,6 +61,16 @@ namespace TSC {
         Pathmap* mp_pathmap;
         std::stack<std::unique_ptr<Scene>> m_scene_stack;
     };
+
+    /**
+     * This is the one and only global pointer in TSC.
+     * It refers to the only Application instance around
+     * during programme run. This pointer is set to null
+     * while startup is not finished and only assigned
+     * after the Application instance has successfully
+     * been constructed.
+     */
+    extern Application* gp_app;
 
 }
 

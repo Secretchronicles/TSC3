@@ -28,6 +28,9 @@
 using namespace TSC;
 using namespace std;
 
+// extern declarations
+Application* TSC::gp_app = nullptr;
+
 Application::Application(int argc, char* argv[])
     : mp_window(nullptr),
       mp_config(nullptr),
