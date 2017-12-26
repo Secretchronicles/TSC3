@@ -1,6 +1,6 @@
 #ifndef TSC_TEXTURE_CACHE_HPP
 #define TSC_TEXTURE_CACHE_HPP
-#include <SFML/Texture.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #include <map>
 #include <string>
 
