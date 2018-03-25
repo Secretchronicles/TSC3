@@ -22,7 +22,7 @@
 #include "pathmap.hpp"
 #include "configuration.hpp"
 #include "scenes/title_scene.hpp"
-#include <SFML/Window.hpp>
+#include <SFML/Graphics.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
 
 using namespace TSC;
@@ -34,7 +34,8 @@ Application* TSC::gp_app = nullptr;
 Application::Application(int argc, char* argv[])
     : mp_window(nullptr),
       mp_config(nullptr),
-      mp_pathmap(nullptr)
+      mp_pathmap(nullptr),
+      m_terminate(false)
 {
     xercesc::XMLPlatformUtils::Initialize();
 
@@ -56,18 +57,64 @@ Application::~Application()
 
 int Application::MainLoop()
 {
+    OpenWindow();
     m_scene_stack.push(unique_ptr<TitleScene>(new TitleScene()));
 
     // Game main loop
-    while (!m_scene_stack.empty()) {
+    while (!m_terminate && !m_scene_stack.empty()) {
         unique_ptr<Scene>& p_scene = m_scene_stack.top();
 
-        // Allow a scene to destroy itself by returning false from update().
-        if (p_scene->Update())
-            p_scene->Draw();
+        // Poll events from SFML
+        p_scene->ProcessEvents(mp_window);
+
+        // Allow a scene to destroy itself by returning false from Update().
+        if (p_scene->Update()) {
+            mp_window->clear(sf::Color::Black);
+            p_scene->Draw(mp_window);
+            mp_window->display();
+        }
         else
             m_scene_stack.pop();
     }
 
+    // If the mainloop was ended by m_terminate, end all the scenes
+    // that still exist.
+    if (!m_scene_stack.empty()) {
+        m_scene_stack.pop();
+    }
+
+    mp_window->close();
+
     return 0;
+}
+
+// Advises the programme to terminate the next time the main loop runs.
+void Application::Terminate()
+{
+    // Implementing this function by emptying the scene stack right
+    // here is probably not a good idea. If a scene calls it, that
+    // would lead to the scene being deleted while a function of the
+    // scene is still running.
+    m_terminate = true;
+}
+
+void Application::OpenWindow()
+{
+    // Retrieve desired resolution from config. If that resolution is not
+    // native to the graphics card, override the config with the best native
+    // resolution available.
+    sf::VideoMode mode(mp_config->screen_width, mp_config->screen_height);
+    if (!mode.isValid()) {
+            mode = sf::VideoMode::getFullscreenModes()[0];
+            mp_config->screen_width = mode.width;
+            mp_config->screen_height = mode.height;
+    }
+
+    // Create the window
+    mp_window = new sf::RenderWindow(mode, "The Secret Chronicles of Dr. M.");
+
+    // Enable vsync if requested
+    if (mp_config->enable_vsync) {
+        mp_window->setVerticalSyncEnabled(true);
+    }
 }

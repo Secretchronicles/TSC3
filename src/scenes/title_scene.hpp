@@ -26,7 +26,7 @@ namespace TSC {
 
     class TitleScene: public Scene {
         virtual bool Update();
-        virtual void Draw() const;
+        virtual void Draw(sf::RenderWindow*) const;
     };
 
 }

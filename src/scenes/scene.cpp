@@ -18,19 +18,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#include "title_scene.hpp"
-#include <iostream>
+#include "scene.hpp"
+#include "../application.hpp"
+#include <SFML/Graphics.hpp>
 
 using namespace std;
 using namespace TSC;
 
-bool TitleScene::Update()
+/*
+ * This function contains the event loop, i.e. it retrieves all events
+ * SFML accumulated for the given window and then calls the virtual
+ * ProcessEvent() function to let the scene handle a specific event.
+ *
+ * This function also handles global events that always do the same
+ * regardless of the current scene.
+ */
+void Scene::ProcessEvents(sf::RenderWindow* p_window)
 {
-    //cout << "Hello, TSC!" << endl;
-    return true;
-}
-
-void TitleScene::Draw(sf::RenderWindow*) const
-{
-    // TODO
+    sf::Event event;
+    while (p_window->pollEvent(event)) {
+        switch (event.type) {
+        case sf::Event::Closed: // Window closed
+            gp_app->Terminate();
+        default:
+            ProcessEvent(event);
+        }
+    }
 }

@@ -25,7 +25,7 @@
 
 // forward-declare
 namespace sf {
-    class Window;
+    class RenderWindow;
 }
 
 namespace TSC {
@@ -40,7 +40,7 @@ namespace TSC {
         Application(int argc, char* argv[]);
         ~Application();
 
-        inline const sf::Window& GetWindow()
+        inline const sf::RenderWindow& GetWindow()
         {
             return *mp_window;
         }
@@ -51,15 +51,19 @@ namespace TSC {
         }
 
         int MainLoop();
+        void Terminate();
 
         std::unique_ptr<Scene> PopScene();
         void PushScene(std::unique_ptr<Scene> p_scene);
 
     private:
-        sf::Window* mp_window;
+        sf::RenderWindow* mp_window;
         Configuration* mp_config;
         Pathmap* mp_pathmap;
+        bool m_terminate;
         std::stack<std::unique_ptr<Scene>> m_scene_stack;
+
+        void OpenWindow();
     };
 
     /**

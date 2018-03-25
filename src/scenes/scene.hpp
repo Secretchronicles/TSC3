@@ -21,12 +21,22 @@
 #ifndef TSC_SCENE_HPP
 #define TSC_SCENE_HPP
 
+// forward-declare
+namespace sf {
+    class RenderWindow;
+    class Event;
+}
+
 namespace TSC {
 
     class Scene {
     public:
         Scene() {}
         virtual ~Scene() {}
+
+        /// Override this function if you need user input.
+        /// It gets passed one event at a time.
+        virtual void ProcessEvent(sf::Event&) {};
 
         /**
          * Update() shall update all logic in the scene, but not
@@ -37,7 +47,9 @@ namespace TSC {
         virtual bool Update() = 0;
         /// Draw() shall draw the updated scene onto the screen.
         /// Game logic updates should be in Update().
-        virtual void Draw() const = 0;
+        virtual void Draw(sf::RenderWindow* p_stage) const = 0;
+
+        void ProcessEvents(sf::RenderWindow* p_stage);
     };
 
 }
