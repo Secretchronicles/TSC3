@@ -45,14 +45,14 @@ Path Pathmap::GetConfigPath() const
 Path Pathmap::GetDataPath() const
 {
 #ifdef _WIN32
-    return Path::exe().dirname() / ".." / "share" / "tsc";
+    return Path::exe().dirname() / ".." / "share" / "tsc3";
 #else
     /* INSTALL_DATADIR is assumed to be UTF-8. This breaks on systems
      * that encode the build system commandline arguments not as UTF-8.
      * Since Win32 is taken care of above already, the problem is small
      * enough to ignore; non-UTF-8 Unices have become rare. And even on
      * those, sticking to plain ASCII works in any case. */
-    return Path(INSTALL_DATADIR);
+    return Path(INSTALL_DATADIR) / "tsc3";
 #endif
 }
 
@@ -64,4 +64,13 @@ Path Pathmap::GetDataPath() const
 Path Pathmap::GetPixmapsPath() const
 {
     return GetDataPath() / "pixmaps";
+}
+
+/**
+ * Returns the absolute path to the directory where TSC's
+ * compiled MO translations are stored.
+ */
+Path Pathmap::GetLocalePath() const {
+    // This must match where cmake places the MO files.
+    return GetDataPath() / "translations";
 }

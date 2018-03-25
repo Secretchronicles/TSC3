@@ -18,22 +18,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef TSC_PATHMAP_HPP
-#define TSC_PATHMAP_HPP
-#include <pathie/path.hpp>
+#ifndef TSC_I18N_HPP
+#define TSC_I18N_HPP
+
+#include "gettext.h"
+
+// Pass this string to Gettext for translation.
+#define _(String) gettext(String)
+// Same as _(), but for strings that need pluralisation.
+#define PL_(Singular, Plural, Num) ngettext((Singular), (Plural), (Num))
+// Translates with context where ambigous (see section 11.2.5 of
+// the Gettext manual).
+#define C_(Context, String) pgettext(Context, String)
 
 namespace TSC {
 
-    class Pathmap {
-    public:
-        Pathmap();
-
-        Pathie::Path GetConfigPath() const;
-        Pathie::Path GetDataPath() const;
-        Pathie::Path GetPixmapsPath() const;
-        Pathie::Path GetLocalePath() const;
-    };
+    void SetupI18n(const char* localedir);
 
 }
 
-#endif /* TSC_PATHMAP_HPP */
+#endif

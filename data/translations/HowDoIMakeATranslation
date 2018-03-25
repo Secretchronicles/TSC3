@@ -1,0 +1,55 @@
+How to translate TSC3
+=====================
+
+It's easy. TSC uses a software named "Gettext" to provide the
+translations, and this software requires translations to be stored in
+a format called "PO". To edit files of this format, install a PO
+editor of your choice. If you don't have a specific preference, we
+recommend you use POEdit (<https://poedit.net/>), which is free
+software. If you're an Emacs user, you can use the PO-Mode supplied
+with Gettext itself.
+
+1. Once you acquired a PO editor, get a copy of the TSC3 source tree,
+   e.g. by cloning it from Git or downloading and extracting a source
+   tarball.
+
+2. Then, open a terminal and navigate to the directory this file you are
+   currently reading resides in.
+
+3. Now determine the two-letter country code of your language using the
+   Internet. For German, it's "de" for example.
+
+4. (If you want to edit an existing translation, skip this step.)
+   If you want to create a new translation, copy the file "TSC3.po" to
+   "de.po" (or whatever two-letter country code your language has, plus
+   ".po").
+
+        $ cp TSC3.pot de.po
+
+5. (If you want to edit an existing translation, skip this step.)
+   Adapt the Gettext header to your language's needs. Especially
+   important is to specify the "Content-Type" line correctly,
+   which should almost always read:
+
+       "Content-Type: text/plain; charset=UTF-8"
+
+   Fill in the rest of the Gettext header as you see fit. Do not touch
+   the "POT-Creation-Date" line. Remove the "#, fuzzy" comment line
+   when you're done.
+
+6. Now synchronize your translation with the master POT file by executing
+   this command:
+
+        $ make de.po
+
+    It can happen that this command also updates the POT master file,
+    because the TSC source code changed since it was last updated.
+    This is normal, don't let that scare you.
+
+7. Translate all the strings in the PO file.
+
+8. Submit the edited PO file to the TSC team. To do that, either open
+   a ticket or pull request at <https://github.com/Secretchronicles/TSC3>,
+   or subscribe to the tsc-devel mailinglist at
+   <https://lists.secretchronicles.org/postorius/lists/tsc-devel.lists.secretchronicles.org/>
+   and then email the translation to that list.

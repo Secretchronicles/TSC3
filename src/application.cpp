@@ -22,6 +22,7 @@
 #include "pathmap.hpp"
 #include "configuration.hpp"
 #include "scenes/title_scene.hpp"
+#include "i18n.hpp"
 #include <SFML/Graphics.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
 
@@ -41,6 +42,7 @@ Application::Application(int argc, char* argv[])
 
     mp_pathmap = new Pathmap();
     mp_config = new Configuration(mp_pathmap->GetConfigPath());
+    SetupI18n(mp_pathmap->GetLocalePath().utf8_str().c_str());
 }
 
 Application::~Application()
@@ -110,8 +112,8 @@ void Application::OpenWindow()
             mp_config->screen_height = mode.height;
     }
 
-    // Create the window
-    mp_window = new sf::RenderWindow(mode, "The Secret Chronicles of Dr. M.");
+    // TRANS: This is the window's title.
+    mp_window = new sf::RenderWindow(mode, _("The Secret Chronicles of Dr. M."));
 
     // Enable vsync if requested
     if (mp_config->enable_vsync) {
