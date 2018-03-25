@@ -1,7 +1,7 @@
 # coding: utf-8
 #
 # TSC is a 2-dimensional platform game.
-# Copyright © 2017 The TSC Contributors
+# Copyright © 2018 The TSC Contributors
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

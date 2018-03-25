@@ -1,7 +1,7 @@
 ################################################################################
 # FindSFML.cmake - CMake module for finding SFML
 #
-# Copyright © 2017 The TSC Contributors
+# Copyright © 2018 The TSC Contributors
 ################################################################################
 #
 # This program is free software; you can redistribute it and/or modify
