@@ -21,12 +21,19 @@
 #ifndef TSC_TITLE_SCENE_HPP
 #define TSC_TITLE_SCENE_HPP
 #include "scene.hpp"
+#include <SFML/Graphics.hpp>
 
 namespace TSC {
 
     class TitleScene: public Scene {
+    public:
+        TitleScene();
+        virtual ~TitleScene();
+
         virtual bool Update();
         virtual void Draw(sf::RenderWindow*) const;
+
+        sf::Sprite m_background;
     };
 
 }

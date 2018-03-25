@@ -19,18 +19,28 @@
  ******************************************************************************/
 
 #include "title_scene.hpp"
-#include <iostream>
+#include "../application.hpp"
+#include "../texture_cache.hpp"
 
 using namespace std;
 using namespace TSC;
 
+TitleScene::TitleScene()
+{
+    m_background.setTexture(gp_app->GetTextureCache().Get("misc/title.png"));
+    m_background.setPosition(sf::Vector2f(0, 0));
+}
+
+TitleScene::~TitleScene()
+{
+}
+
 bool TitleScene::Update()
 {
-    //cout << "Hello, TSC!" << endl;
     return true;
 }
 
-void TitleScene::Draw(sf::RenderWindow*) const
+void TitleScene::Draw(sf::RenderWindow* p_stage) const
 {
-    // TODO
+    p_stage->draw(m_background);
 }
