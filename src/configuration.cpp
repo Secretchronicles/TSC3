@@ -70,8 +70,6 @@ namespace {
                 mr_config.screen_width = stoi(m_chars);
             else if (localname == "screen_height")
                 mr_config.screen_height = stoi(m_chars);
-            else if (localname == "screen_bpp")
-                mr_config.screen_bpp = stoi(m_chars);
             else if (localname == "enable_vsync")
                 mr_config.enable_vsync = m_chars == "yes";
             else if (localname == "enable_always_run")
@@ -198,11 +196,6 @@ void Configuration::Save() const
 
     p_child = p_doc->createElement(U2X("screen_height"));
     p_text = p_doc->createTextNode(U2X(to_string(screen_height)));
-    p_child->appendChild(p_text);
-    p_root->appendChild(p_child);
-
-    p_child = p_doc->createElement(U2X("screen_bpp"));
-    p_text = p_doc->createTextNode(U2X(to_string(screen_bpp)));
     p_child->appendChild(p_text);
     p_root->appendChild(p_child);
 

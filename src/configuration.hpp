@@ -46,9 +46,8 @@ namespace TSC {
         // Actual configuration settings.
         // The values in braces denote the default configuration values.
         std::string game_version;
-        int screen_width{640};
-        int screen_height{480};
-        int screen_bpp{32};
+        int screen_width{1280};
+        int screen_height{1024};
         int music_volume{100};
         int sound_volume{100};
 
