@@ -85,7 +85,7 @@ add_subdirectory(pathie EXCLUDE_FROM_ALL)
 find_package(Gettext)
 find_package(PNG REQUIRED)
 find_package(XercesC REQUIRED)
-find_package(SFML COMPONENTS graphics window system REQUIRED)
+find_package(SFML COMPONENTS audio graphics window system REQUIRED)
 
 include_directories(${TSC_SOURCE_DIR}/pathie-include)
 include_directories(${SFML_INCLUDE_DIRS})
@@ -142,6 +142,8 @@ install(PROGRAMS ${TSC_SOURCE_DIR}/tscproc/tscproc-gui.sh
   COMPONENT base)
 
 install(DIRECTORY ${TSC_SOURCE_DIR}/data/pixmaps
+  DESTINATION ${CMAKE_INSTALL_DATADIR}/tsc3)
+install(DIRECTORY ${TSC_SOURCE_DIR}/data/music
   DESTINATION ${CMAKE_INSTALL_DATADIR}/tsc3)
 
 foreach(pofile ${po_files})

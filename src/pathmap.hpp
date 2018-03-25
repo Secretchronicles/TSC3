@@ -32,6 +32,7 @@ namespace TSC {
         Pathie::Path GetDataPath() const;
         Pathie::Path GetPixmapsPath() const;
         Pathie::Path GetLocalePath() const;
+        Pathie::Path GetMusicPath() const;
     };
 
 }

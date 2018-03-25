@@ -22,6 +22,7 @@
 #define TSC_TITLE_SCENE_HPP
 #include "scene.hpp"
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 namespace TSC {
 
@@ -34,6 +35,7 @@ namespace TSC {
         virtual void Draw(sf::RenderWindow*) const;
 
         sf::Sprite m_background;
+        sf::Music m_music;
     };
 
 }

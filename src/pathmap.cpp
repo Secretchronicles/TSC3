@@ -68,6 +68,16 @@ Path Pathmap::GetPixmapsPath() const
 
 /**
  * Returns the absolute path to the directory where TSC's
+ * music files are stored. The directory should be assumed
+ * to be read-only.
+ */
+Path Pathmap::GetMusicPath() const
+{
+    return GetDataPath() / "music";
+}
+
+/**
+ * Returns the absolute path to the directory where TSC's
  * compiled MO translations are stored.
  */
 Path Pathmap::GetLocalePath() const {

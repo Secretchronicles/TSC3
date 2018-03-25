@@ -51,6 +51,11 @@ namespace TSC {
             return *mp_pathmap;
         }
 
+        inline const Configuration& GetConfig()
+        {
+            return *mp_config;
+        }
+
         inline TextureCache& GetTextureCache()
         {
             return *mp_txtcache;
