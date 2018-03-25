@@ -22,6 +22,7 @@
 #include "pathmap.hpp"
 #include "configuration.hpp"
 #include "scenes/title_scene.hpp"
+#include "texture_cache.hpp"
 #include "i18n.hpp"
 #include <SFML/Graphics.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
@@ -36,12 +37,14 @@ Application::Application(int argc, char* argv[])
     : mp_window(nullptr),
       mp_config(nullptr),
       mp_pathmap(nullptr),
+      mp_txtcache(nullptr),
       m_terminate(false)
 {
     xercesc::XMLPlatformUtils::Initialize();
 
     mp_pathmap = new Pathmap();
     mp_config = new Configuration(mp_pathmap->GetConfigPath());
+    mp_txtcache = new TextureCache();
     SetupI18n(mp_pathmap->GetLocalePath().utf8_str().c_str());
 }
 
@@ -51,6 +54,8 @@ Application::~Application()
         delete mp_window;
     if (mp_config)
         delete mp_config;
+    if (mp_txtcache)
+        delete mp_txtcache;
     if (mp_pathmap)
         delete mp_pathmap;
 

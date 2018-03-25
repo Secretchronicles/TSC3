@@ -34,6 +34,7 @@ namespace TSC {
     class Scene;
     class Configuration;
     class Pathmap;
+    class TextureCache;
 
     class Application {
     public:
@@ -50,6 +51,11 @@ namespace TSC {
             return *mp_pathmap;
         }
 
+        inline TextureCache& GetTextureCache()
+        {
+            return *mp_txtcache;
+        }
+
         int MainLoop();
         void Terminate();
 
@@ -60,6 +66,7 @@ namespace TSC {
         sf::RenderWindow* mp_window;
         Configuration* mp_config;
         Pathmap* mp_pathmap;
+        TextureCache* mp_txtcache;
         bool m_terminate;
         std::stack<std::unique_ptr<Scene>> m_scene_stack;
 

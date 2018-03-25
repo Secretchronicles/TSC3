@@ -36,6 +36,15 @@ TextureCache::~TextureCache()
     //
 }
 
+/**
+ * Retrieve a texture from the list of loaded textures. If the texture
+ * has not yet been loaded, does so and places it in the list of loaded
+ * textures.
+ *
+ * \param relpath
+ * Path to the file to load as a texture. This needs to be relative
+ * to the pixmaps/ directory.
+ */
 sf::Texture& TextureCache::Get(const std::string& relpath)
 {
     if (m_cache.count(relpath) > 0)
