@@ -24,6 +24,7 @@
 
 namespace TSC {
     void warn(const std::string& msg);
+    std::string format(const std::string& spec, ...);
 }
 
 #endif /* TSC_UTIL_HPP */

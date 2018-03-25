@@ -20,10 +20,56 @@
 
 #include "util.hpp"
 #include <iostream>
+#include <cstdio>
+#include <cstdarg>
+#include <cstdlib>
 
 using namespace std;
 
 void TSC::warn(const std::string& msg)
 {
     cerr << "Warning: " << msg << endl;
+}
+
+/**
+ * A function equivalent to C's sprintf(), but returns a C++ std::string
+ * instead so that you don't have to think about the memory management.
+ * This function calls vsnprintf() for the actual formatting operation, so
+ * look in that function's documentation for the format specifiers.
+ */
+string format(const string& spec, ...)
+{
+    va_list ap;
+    int len      = spec.size() + 4096; // 4096 are an educated guess for what's likely needed
+    char* target = (char*) malloc(len);
+
+    va_start(ap, spec);
+    int result = vsnprintf(target, len, spec.c_str(), ap);
+    va_end(ap);
+
+    if (result >= len) { // Guess was to small, reallocate with required space
+        len    = result + 1; // +1 for terminating NUL
+        target = (char*) realloc(target, len);
+
+        va_start(ap, spec);
+        result = vsnprintf(target, len, spec.c_str(), ap);
+        va_end(ap);
+
+        if (result >= len) { // Should not happen
+            free(target);
+            throw(runtime_error("format() failed for unknown reasons in vsnprintf()"));
+        }
+        else if (result < 0) {
+            free(target);
+            throw(runtime_error("format() failed with an output eror"));
+        }
+    }
+    else if (result < 0) {
+        free(target);
+        throw(runtime_error("format() failed with an output eror"));
+    }
+
+    string retval(target, result);
+    free(target);
+    return retval;
 }
