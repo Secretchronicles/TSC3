@@ -88,6 +88,7 @@ find_package(XercesC REQUIRED)
 find_package(SFML COMPONENTS audio graphics window system REQUIRED)
 
 include_directories(${TSC_SOURCE_DIR}/pathie-include)
+include_directories(${TSC_SOURCE_DIR}/nuklear)
 include_directories(${SFML_INCLUDE_DIRS})
 include_directories(${XercesC_INCLUDE_DIRS})
 add_definitions(${SFML_DEFINITIONS})

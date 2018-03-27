@@ -1,3 +1,6 @@
 [submodule "pathie"]
 	path = pathie
 	url = git://git.guelkerdev.de/pathie.git
+[submodule "nuklear"]
+	path = nuklear
+	url = git://github.com/vurtun/nuklear.git
