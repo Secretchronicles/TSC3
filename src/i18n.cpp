@@ -21,6 +21,7 @@
 #include "i18n.hpp"
 #include <errno.h>
 #include <string>
+#include <SFML/System.hpp>
 
 using namespace std;
 
@@ -48,4 +49,11 @@ void TSC::SetupI18n(const char* localedir)
         throw(string("Failed to force UTF-8 output from Gettext: ") + strerror(errsav));
     }
 
+}
+
+sf::String S_(const std::string& str)
+{
+    const char* cstr = gettext(str.c_str());
+    std::string cppstr(cstr);
+    return sf::String::fromUtf8(cppstr.begin(), cppstr.end());
 }

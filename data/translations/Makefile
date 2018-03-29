@@ -9,6 +9,7 @@ TSC3.pot: $(SRCFILES)
 	--add-comments='TRANS:' \
 	--width=65 \
 	--keyword=_ \
+	--keyword=S_ \
 	--keyword=PL_ \
 	--keyword=C_ \
 	--package-name=TSC3 \
