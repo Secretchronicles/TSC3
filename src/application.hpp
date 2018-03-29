@@ -37,7 +37,6 @@ namespace TSC {
     // forward-declare
     class Scene;
     class Configuration;
-    class TextureCache;
     class FontStore;
 
     class Application {
@@ -53,11 +52,6 @@ namespace TSC {
         inline const Configuration& GetConfig()
         {
             return *mp_config;
-        }
-
-        inline TextureCache& GetTextureCache()
-        {
-            return *mp_txtcache;
         }
 
         inline FontStore& GetFontStore()
@@ -83,7 +77,6 @@ namespace TSC {
         sf::Clock* mp_game_clock;
         sf::Text* mp_fps;
         Configuration* mp_config;
-        TextureCache* mp_txtcache;
         FontStore* mp_fonts;
         nk_context* mp_gui;
         nk_user_font* mp_gui_font;

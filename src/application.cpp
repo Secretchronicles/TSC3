@@ -41,7 +41,6 @@ Application::Application(int argc, char* argv[])
       mp_game_clock(nullptr),
       mp_fps(nullptr),
       mp_config(nullptr),
-      mp_txtcache(nullptr),
       mp_fonts(nullptr),
       mp_gui(nullptr),
       mp_gui_font(nullptr),
@@ -52,7 +51,6 @@ Application::Application(int argc, char* argv[])
     xercesc::XMLPlatformUtils::Initialize();
 
     mp_config = new Configuration(Pathmap::GetConfigPath());
-    mp_txtcache = new TextureCache();
     mp_fonts = new FontStore();
     mp_game_clock = new sf::Clock();
     mp_fps = new sf::Text();
@@ -69,8 +67,6 @@ Application::~Application()
         delete mp_window;
     if (mp_config)
         delete mp_config;
-    if (mp_txtcache)
-        delete mp_txtcache;
     if (mp_fonts)
         delete mp_fonts;
     if (mp_game_clock)

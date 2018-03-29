@@ -20,20 +20,21 @@
 
 #ifndef TSC_TEXTURE_CACHE_HPP
 #define TSC_TEXTURE_CACHE_HPP
-#include <SFML/Graphics/Texture.hpp>
-#include <map>
 #include <string>
+
+// forward-declare
+namespace sf {
+    class Texture;
+}
 
 namespace TSC {
 
-    class TextureCache {
-    public:
-        TextureCache();
-        ~TextureCache();
-
+    /**
+     * The global cache for all textures uploaded to the graphics
+     * card.
+     */
+    namespace TextureCache {
         sf::Texture& Get(const std::string& relpath);
-    private:
-        std::map<std::string, sf::Texture> m_cache;
     };
 }
 

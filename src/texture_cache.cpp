@@ -20,20 +20,15 @@
 
 #include "texture_cache.hpp"
 #include "pathmap.hpp"
+#include <map>
+#include <string>
 #include <SFML/Graphics.hpp>
 
 using namespace TSC;
 using namespace Pathie;
 
-TextureCache::TextureCache()
-{
-    //
-}
-
-TextureCache::~TextureCache()
-{
-    //
-}
+// Actual global texture cache.
+static std::map<std::string, sf::Texture> s_cache;
 
 /**
  * Retrieve a texture from the list of loaded textures. If the texture
@@ -46,11 +41,11 @@ TextureCache::~TextureCache()
  */
 sf::Texture& TextureCache::Get(const std::string& relpath)
 {
-    if (m_cache.count(relpath) > 0)
-        return m_cache[relpath];
+    if (s_cache.count(relpath) > 0)
+        return s_cache[relpath];
     else {
         Path p = Pathmap::GetPixmapsPath() / relpath;
-        m_cache[relpath].loadFromFile(p.utf8_str());
-        return m_cache[relpath];
+        s_cache[relpath].loadFromFile(p.utf8_str());
+        return s_cache[relpath];
     }
 }
