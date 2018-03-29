@@ -170,7 +170,8 @@ void TSC::DrawNKGUI(struct nk_context* p_ctx, sf::RenderWindow* p_window)
         case NK_COMMAND_TEXT: {
             const struct nk_command_text* t = (const struct nk_command_text*) p_cmd;
             sf::Font* p_font = (sf::Font*) t->font->userdata.ptr;
-            sf::Text text(std::string(t->string), *p_font, TSC::GUI_FONT_SIZE);
+            std::string utf8str(t->string);
+            sf::Text text(sf::String::fromUtf8(utf8str.begin(), utf8str.end()), *p_font, TSC::GUI_FONT_SIZE);
             text.setFillColor(NKColor2SFColor(t->foreground));
             text.setPosition(sf::Vector2f(t->x, t->y));
             p_window->draw(text);

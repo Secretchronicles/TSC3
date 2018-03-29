@@ -115,7 +115,7 @@ int Application::MainLoop()
 
             // Draw FPS
             int fps = static_cast<int>(1.0f / m_frame_time);
-            mp_fps->setString(format(_("FPS: %d"), fps));
+            mp_fps->setString(sformat(_("FPS: %d"), fps));
             mp_window->draw(*mp_fps);
 
             // Flip buffers
