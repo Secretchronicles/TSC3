@@ -82,6 +82,10 @@ int Application::MainLoop()
     while (!m_terminate && !m_scene_stack.empty()) {
         unique_ptr<Scene>& p_scene = m_scene_stack.top();
 
+        // TODO: Hand events to nuklear GUI
+        nk_input_begin(mp_gui);
+        nk_input_end(mp_gui);
+
         // Poll events from SFML
         p_scene->ProcessEvents(mp_window);
 

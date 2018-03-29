@@ -69,6 +69,11 @@ namespace TSC {
             return *mp_fonts;
         }
 
+        inline nk_context* GetGUI()
+        {
+            return mp_gui;
+        }
+
         int MainLoop();
         void Terminate();
         inline void EnableGUI() { m_render_gui = true; }
