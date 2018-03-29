@@ -36,7 +36,6 @@ namespace TSC {
 
     // forward-declare
     class Scene;
-    class Configuration;
     class FontStore;
 
     class Application {
@@ -47,11 +46,6 @@ namespace TSC {
         inline const sf::RenderWindow& GetWindow()
         {
             return *mp_window;
-        }
-
-        inline const Configuration& GetConfig()
-        {
-            return *mp_config;
         }
 
         inline FontStore& GetFontStore()
@@ -76,7 +70,6 @@ namespace TSC {
         sf::RenderWindow* mp_window;
         sf::Clock* mp_game_clock;
         sf::Text* mp_fps;
-        Configuration* mp_config;
         FontStore* mp_fonts;
         nk_context* mp_gui;
         nk_user_font* mp_gui_font;

@@ -18,10 +18,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#include "configuration.hpp"
+#include "settings.hpp"
 #include "config.hpp"
 #include "util.hpp"
 #include "xerces_helpers.hpp"
+#include "pathmap.hpp"
 #include <pathie/path.hpp>
 #include <xercesc/sax2/DefaultHandler.hpp>
 #include <xercesc/sax2/SAX2XMLReader.hpp>
@@ -43,14 +44,25 @@ using namespace xercesc;
 using namespace Pathie;
 using namespace std;
 
+// The default settings values
+int Settings::screen_width       = 1280;
+int Settings::screen_height      = 1024;
+int Settings::music_volume       = 100;
+int Settings::sound_volume       = 100;
+
+bool Settings::enable_vsync      = false;
+bool Settings::enable_always_run = false;
+bool Settings::enable_fullscreen = false;
+bool Settings::enable_music      = true;
+bool Settings::enable_sound      = true;
+
+// This does not have a default value. It is required to be present
+// in the configuration file.
+std::string Settings::game_version;
+
 namespace {
     class ConfigurationHandler: public DefaultHandler {
     public:
-        ConfigurationHandler(Configuration& config)
-            : mr_config(config)
-        {
-        }
-
         virtual void startElement(const XMLCh* const,
                                   const XMLCh* const,
                                   const XMLCh* const,
@@ -65,34 +77,34 @@ namespace {
         {
             string localname = X2U(xlocalname);
             if (localname == "game_version")
-                mr_config.game_version = m_chars;
+                Settings::game_version = m_chars;
             else if (localname == "screen_width")
-                mr_config.screen_width = stoi(m_chars);
+                Settings::screen_width = stoi(m_chars);
             else if (localname == "screen_height")
-                mr_config.screen_height = stoi(m_chars);
+                Settings::screen_height = stoi(m_chars);
             else if (localname == "enable_vsync")
-                mr_config.enable_vsync = m_chars == "yes";
+                Settings::enable_vsync = m_chars == "yes";
             else if (localname == "enable_always_run")
-                mr_config.enable_always_run = m_chars == "yes";
+                Settings::enable_always_run = m_chars == "yes";
             else if (localname == "enable_fullscreen")
-                mr_config.enable_fullscreen = m_chars == "yes";
+                Settings::enable_fullscreen = m_chars == "yes";
             else if (localname == "enable_music")
-                mr_config.enable_music = m_chars == "yes";
+                Settings::enable_music = m_chars == "yes";
             else if (localname == "enable_sound")
-                mr_config.enable_sound = m_chars == "yes";
+                Settings::enable_sound = m_chars == "yes";
             else if (localname == "music_volume") {
-                mr_config.music_volume = stoi(m_chars);
-                if (mr_config.music_volume < 0)
-                    mr_config.music_volume = 0;
-                else if (mr_config.music_volume > 100)
-                    mr_config.music_volume = 100;
+                Settings::music_volume = stoi(m_chars);
+                if (Settings::music_volume < 0)
+                    Settings::music_volume = 0;
+                else if (Settings::music_volume > 100)
+                    Settings::music_volume = 100;
             }
             else if (localname == "sound_volume") {
-                mr_config.sound_volume = stoi(m_chars);
-                if (mr_config.sound_volume < 0)
-                    mr_config.sound_volume = 0;
-                else if (mr_config.sound_volume > 100)
-                    mr_config.sound_volume = 100;
+                Settings::sound_volume = stoi(m_chars);
+                if (Settings::sound_volume < 0)
+                    Settings::sound_volume = 0;
+                else if (Settings::sound_volume > 100)
+                    Settings::sound_volume = 100;
             }
             else if (localname == "configuration") {
                 // Ignore root node
@@ -108,30 +120,26 @@ namespace {
         }
 
     private:
-        Configuration& mr_config;
         string m_chars;
     };
 }
 
 /**
- * Constructs a new Configuration instance that reads the configuration from
- * the passed file. The file is immediately parsed in the constructor, which
- * hence might throw exceptions just as Xerces-C does.
- *
- * `path` is expected to be encoded in UTF-8.
+ * Read the configuration file and adapt the global settings
+ * accordingly. This method can throw the same exceptions as
+ * Xerces-C does when parsing a file.
  */
-Configuration::Configuration(const Path& path)
-    : mp_path(new Path(path))
+void Settings::Load()
 {
-    if (mp_path->exists()) {
+    if (Pathmap::GetConfigPath().exists()) {
         SAX2XMLReader* p_reader = XMLReaderFactory::createXMLReader();
         p_reader->setFeature(XMLUni::fgSAX2CoreValidation, false);
 
-        ConfigurationHandler handler(*this);
+        ConfigurationHandler handler;
         p_reader->setContentHandler(&handler);
         p_reader->setErrorHandler(&handler);
 
-        LocalFileInputSource source(U2X(path.utf8_str()));
+        LocalFileInputSource source(U2X(Pathmap::GetConfigPath().utf8_str()));
         p_reader->parse(source);
 
         // A version compatibility check would go here.
@@ -151,14 +159,8 @@ Configuration::Configuration(const Path& path)
                        "." +
                        to_string(TSC_VERSION_PATCH);
 
-        Save();
+        Settings::Save();
     }
-}
-
-Configuration::~Configuration()
-{
-    Save();
-    delete mp_path;
 }
 
 /**
@@ -166,9 +168,9 @@ Configuration::~Configuration()
  * file that was specified in the constructor. If the directory
  * for the configuration file does not exist, it is created.
  */
-void Configuration::Save() const
+void Settings::Save()
 {
-    mp_path->parent().mktree();
+    Pathmap::GetConfigPath().parent().mktree();
 
     // LS = Load+Save
     DOMImplementation* p_impl = DOMImplementationRegistry::getDOMImplementation(
@@ -235,7 +237,7 @@ void Configuration::Save() const
     p_root->appendChild(p_child);
 
     // Write it out to disk
-    LocalFileFormatTarget target(U2X(mp_path->utf8_str()));
+    LocalFileFormatTarget target(U2X(Pathmap::GetConfigPath().utf8_str()));
     DOMLSSerializer* p_serializer = p_impl->createLSSerializer();
     DOMLSOutput*     p_output     = p_impl->createLSOutput();
 

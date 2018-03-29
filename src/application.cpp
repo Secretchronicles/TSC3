@@ -20,7 +20,7 @@
 
 #include "application.hpp"
 #include "pathmap.hpp"
-#include "configuration.hpp"
+#include "settings.hpp"
 #include "scenes/title_scene.hpp"
 #include "texture_cache.hpp"
 #include "font_store.hpp"
@@ -40,7 +40,6 @@ Application::Application(int argc, char* argv[])
     : mp_window(nullptr),
       mp_game_clock(nullptr),
       mp_fps(nullptr),
-      mp_config(nullptr),
       mp_fonts(nullptr),
       mp_gui(nullptr),
       mp_gui_font(nullptr),
@@ -49,8 +48,8 @@ Application::Application(int argc, char* argv[])
       m_frame_time(0.0f)
 {
     xercesc::XMLPlatformUtils::Initialize();
+    Settings::Load();
 
-    mp_config = new Configuration(Pathmap::GetConfigPath());
     mp_fonts = new FontStore();
     mp_game_clock = new sf::Clock();
     mp_fps = new sf::Text();
@@ -63,10 +62,10 @@ Application::Application(int argc, char* argv[])
 
 Application::~Application()
 {
+    Settings::Save();
+
     if (mp_window)
         delete mp_window;
-    if (mp_config)
-        delete mp_config;
     if (mp_fonts)
         delete mp_fonts;
     if (mp_game_clock)
@@ -144,18 +143,18 @@ void Application::OpenWindow()
     // Retrieve desired resolution from config. If that resolution is not
     // native to the graphics card, override the config with the best native
     // resolution available.
-    sf::VideoMode mode(mp_config->screen_width, mp_config->screen_height);
+    sf::VideoMode mode(Settings::screen_width, Settings::screen_height);
     if (!mode.isValid()) {
             mode = sf::VideoMode::getFullscreenModes()[0];
-            mp_config->screen_width = mode.width;
-            mp_config->screen_height = mode.height;
+            Settings::screen_width = mode.width;
+            Settings::screen_height = mode.height;
     }
 
     // TRANS: This is the window's title.
     mp_window = new sf::RenderWindow(mode, _("The Secret Chronicles of Dr. M."));
 
     // Enable vsync if requested
-    if (mp_config->enable_vsync) {
+    if (Settings::enable_vsync) {
         mp_window->setVerticalSyncEnabled(true);
     }
 }

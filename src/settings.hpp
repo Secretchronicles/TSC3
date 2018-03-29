@@ -22,42 +22,26 @@
 #define TSC_CONFIGURATION_HPP
 #include <string>
 
-// forward-declare
-namespace Pathie {
-    class Path;
-}
-
 namespace TSC {
 
     /**
-     * This class encapsulates handling of TSC's configuration file.
+     * This namespace encapsulates handling of TSC's configuration file.
      */
-    class Configuration {
-    public:
-        Configuration(const Pathie::Path& path);
-        ~Configuration();
+    namespace Settings {
+        void Load();
+        void Save();
 
-        void Save() const;
-        inline const Pathie::Path& GetPath()
-        {
-            return *mp_path;
-        }
+        extern std::string game_version;
+        extern int screen_width;
+        extern int screen_height;
+        extern int music_volume;
+        extern int sound_volume;
 
-        // Actual configuration settings.
-        // The values in braces denote the default configuration values.
-        std::string game_version;
-        int screen_width{1280};
-        int screen_height{1024};
-        int music_volume{100};
-        int sound_volume{100};
-
-        bool enable_vsync{false};
-        bool enable_always_run{false};
-        bool enable_fullscreen{false};
-        bool enable_music{true};
-        bool enable_sound{true};
-    private:
-        const Pathie::Path* mp_path;
+        extern bool enable_vsync;
+        extern bool enable_always_run;
+        extern bool enable_fullscreen;
+        extern bool enable_music;
+        extern bool enable_sound;
     };
 
 }
