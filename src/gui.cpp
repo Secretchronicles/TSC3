@@ -83,6 +83,7 @@ void TSC::DrawNKGUI(struct nk_context* p_ctx, sf::RenderWindow* p_window)
                 polyline[i].position = sf::Vector2f(p->points[i].x, p->points[i].y);
                 polyline[i].color = NKColor2SFColor(p->color);
             }
+            p_window->draw(polyline);
             // TODO: Line thickness
         } break;
         case NK_COMMAND_RECT: {
