@@ -1,6 +1,23 @@
 The Secret Chronicles of Dr. M.
 ===============================
 
+    ********************************************************************
+                                   WARNING
+    ********************************************************************
+
+This is **NOT** the repository you are looking for unless you are actively
+interested in developing TSC3! This repository contains an entirely
+new rewrite that is far from being anywhere near usable!
+
+The current version of TSC is TSC2 and it is maintained at
+<https://github.com/Secretchronicles/TSC>, so head over there if you
+want to just play TSC, fix some bugs in the current version, or want
+to package it.
+
+    ********************************************************************
+                                 END WARNING
+    ********************************************************************
+
 “The Secret Chronicles of Dr. M.” is a 2D sidecrolling platform game,
 with a rich set of graphics, music, and an advanced level editor that
 allows you to create your own levels. The level editor allows for
@@ -22,9 +39,13 @@ Links
 -----
 
 * The TSC website: <https://secretchronicles.org>
-* The mailinglists: <https://lists.secretchronicles.org/postorius/lists/>
-* The forums: <https://lists.secretchronicles.org/hyperkitty/>
+* The user mailinglist: <https://lists.secretchronicles.org/postorius/lists/tsc-users.lists.secretchronicles.org/>
+* The developer mailinglist: <https://lists.secretchronicles.org/postorius/lists/tsc-devel.lists.secretchronicles.org/>
+* The user forums: <https://lists.secretchronicles.org/hyperkitty/list/tsc-users@lists.secretchronicles.org/>
+* The developer forums: <https://lists.secretchronicles.org/hyperkitty/list/tsc-devel@lists.secretchronicles.org/>
 * The bugtracker: <https://github.com/Secretchronicles/TSC/issues>
+
+The forums and mailinglists are mirrored to one another.
 
 Contributing
 ------------
