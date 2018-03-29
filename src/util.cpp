@@ -23,6 +23,7 @@
 #include <cstdio>
 #include <cstdarg>
 #include <cstdlib>
+#include <SFML/System.hpp>
 
 using namespace std;
 
@@ -31,29 +32,23 @@ void TSC::warn(const std::string& msg)
     cerr << "Warning: " << msg << endl;
 }
 
-/**
- * A function equivalent to C's sprintf(), but returns a C++ std::string
- * instead so that you don't have to think about the memory management.
- * This function calls vsnprintf() for the actual formatting operation, so
- * look in that function's documentation for the format specifiers.
- */
-string TSC::format(const string& spec, ...)
+static string vaformat(const string& spec, va_list& ap)
 {
-    va_list ap;
     int len      = spec.size() + 4096; // 4096 are an educated guess for what's likely needed
     char* target = (char*) malloc(len);
 
-    va_start(ap, spec);
-    int result = vsnprintf(target, len, spec.c_str(), ap);
-    va_end(ap);
+    // Can't iterate a va_list twice, hence copy it.
+    va_list copyap;
+    va_copy(copyap, ap);
+
+    int result = vsnprintf(target, len, spec.c_str(), copyap);
+
 
     if (result >= len) { // Guess was to small, reallocate with required space
         len    = result + 1; // +1 for terminating NUL
         target = (char*) realloc(target, len);
 
-        va_start(ap, spec);
         result = vsnprintf(target, len, spec.c_str(), ap);
-        va_end(ap);
 
         if (result >= len) { // Should not happen
             free(target);
@@ -72,4 +67,32 @@ string TSC::format(const string& spec, ...)
     string retval(target, result);
     free(target);
     return retval;
+}
+
+/**
+ * A function equivalent to C's sprintf(), but returns a C++ std::string
+ * instead so that you don't have to think about the memory management.
+ * This function calls vsnprintf() for the actual formatting operation, so
+ * look in that function's documentation for the format specifiers.
+ */
+string TSC::format(const string& spec, ...)
+{
+    va_list ap;
+    va_start(ap, spec);
+    std::string result = vaformat(spec, ap);
+    va_end(ap);
+
+    return result;
+}
+
+/// The same as format(), but returns the result as a UTF-32-encoded
+/// sf::String instead that can be directly passed to SFML's functions.
+sf::String TSC::sformat(const string& spec, ...)
+{
+    va_list ap;
+    va_start(ap, spec);
+    std::string str = vaformat(spec, ap);
+    va_end(ap);
+
+    return sf::String::fromUtf8(str.begin(), str.end());
 }

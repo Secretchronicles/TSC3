@@ -21,10 +21,12 @@
 #ifndef TSC_UTIL_HPP
 #define TSC_UTIL_HPP
 #include <string>
+#include <SFML/System/String.hpp>
 
 namespace TSC {
     void warn(const std::string& msg);
     std::string format(const std::string& spec, ...);
+    sf::String sformat(const std::string& spec, ...);
 }
 
 #endif /* TSC_UTIL_HPP */
