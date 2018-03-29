@@ -24,15 +24,10 @@
 using namespace TSC;
 using namespace Pathie;
 
-Pathmap::Pathmap()
-{
-    //
-}
-
 /**
  * Returns the absolute path to TSC's configuration file.
  */
-Path Pathmap::GetConfigPath() const
+Path Pathmap::GetConfigPath()
 {
     return Path::config_dir() / "tsc3" / "config.xml";
 }
@@ -42,7 +37,7 @@ Path Pathmap::GetConfigPath() const
  * assets are stored. This directoy should be assumed to
  * be read-only as it will usually reside below /usr.
  */
-Path Pathmap::GetDataPath() const
+Path Pathmap::GetDataPath()
 {
 #ifdef _WIN32
     return Path::exe().dirname() / ".." / "share" / "tsc3";
@@ -61,7 +56,7 @@ Path Pathmap::GetDataPath() const
  * pixmaps are stored. The directory should be assumed to
  * be read-only.
  */
-Path Pathmap::GetPixmapsPath() const
+Path Pathmap::GetPixmapsPath()
 {
     return GetDataPath() / "pixmaps";
 }
@@ -71,7 +66,7 @@ Path Pathmap::GetPixmapsPath() const
  * music files are stored. The directory should be assumed
  * to be read-only.
  */
-Path Pathmap::GetMusicPath() const
+Path Pathmap::GetMusicPath()
 {
     return GetDataPath() / "music";
 }
@@ -80,7 +75,7 @@ Path Pathmap::GetMusicPath() const
  * Returns the absolute path to the directory where TSC's
  * compiled MO translations are stored.
  */
-Path Pathmap::GetLocalePath() const {
+Path Pathmap::GetLocalePath() {
     // This must match where cmake places the MO files.
     return GetDataPath() / "translations";
 }
@@ -90,6 +85,6 @@ Path Pathmap::GetLocalePath() const {
  * font files are stored. This directory should be assumed
  * to be read-only.
  */
-Path Pathmap::GetFontPath() const {
+Path Pathmap::GetFontPath() {
     return GetDataPath() / "fonts";
 }

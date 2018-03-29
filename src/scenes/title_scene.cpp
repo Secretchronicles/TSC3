@@ -33,7 +33,7 @@ TitleScene::TitleScene()
     m_background.setTexture(gp_app->GetTextureCache().Get("misc/title.png"));
     m_background.setPosition(sf::Vector2f(0, 0));
 
-    m_music.openFromFile((gp_app->GetPathmap().GetMusicPath() / "title.ogg").utf8_str());
+    m_music.openFromFile((Pathmap::GetMusicPath() / "title.ogg").utf8_str());
     m_music.setLoop(true);
     m_music.play();
 }

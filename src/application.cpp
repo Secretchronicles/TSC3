@@ -41,7 +41,6 @@ Application::Application(int argc, char* argv[])
       mp_game_clock(nullptr),
       mp_fps(nullptr),
       mp_config(nullptr),
-      mp_pathmap(nullptr),
       mp_txtcache(nullptr),
       mp_fonts(nullptr),
       mp_gui(nullptr),
@@ -52,17 +51,16 @@ Application::Application(int argc, char* argv[])
 {
     xercesc::XMLPlatformUtils::Initialize();
 
-    mp_pathmap = new Pathmap();
-    mp_config = new Configuration(mp_pathmap->GetConfigPath());
+    mp_config = new Configuration(Pathmap::GetConfigPath());
     mp_txtcache = new TextureCache();
-    mp_fonts = new FontStore(*mp_pathmap);
+    mp_fonts = new FontStore();
     mp_game_clock = new sf::Clock();
     mp_fps = new sf::Text();
     mp_fps->setFont(mp_fonts->NormalFont);
     mp_fps->setFillColor(sf::Color::Yellow);
     mp_fps->setCharacterSize(TSC::GUI_FONT_SIZE);
     mp_fps->setPosition(10, 10);
-    SetupI18n(mp_pathmap->GetLocalePath().utf8_str().c_str());
+    SetupI18n(Pathmap::GetLocalePath().utf8_str().c_str());
 }
 
 Application::~Application()
@@ -75,8 +73,6 @@ Application::~Application()
         delete mp_txtcache;
     if (mp_fonts)
         delete mp_fonts;
-    if (mp_pathmap)
-        delete mp_pathmap;
     if (mp_game_clock)
         delete mp_game_clock;
 

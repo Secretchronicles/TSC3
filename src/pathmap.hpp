@@ -24,16 +24,13 @@
 
 namespace TSC {
 
-    class Pathmap {
-    public:
-        Pathmap();
-
-        Pathie::Path GetConfigPath() const;
-        Pathie::Path GetDataPath() const;
-        Pathie::Path GetPixmapsPath() const;
-        Pathie::Path GetLocalePath() const;
-        Pathie::Path GetMusicPath() const;
-        Pathie::Path GetFontPath() const;
+    namespace Pathmap {
+        Pathie::Path GetConfigPath();
+        Pathie::Path GetDataPath();
+        Pathie::Path GetPixmapsPath();
+        Pathie::Path GetLocalePath();
+        Pathie::Path GetMusicPath();
+        Pathie::Path GetFontPath();
     };
 
 }

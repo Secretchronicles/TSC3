@@ -26,8 +26,6 @@
 
 namespace TSC {
 
-    class Pathmap;
-
     class TextureCache {
     public:
         TextureCache();

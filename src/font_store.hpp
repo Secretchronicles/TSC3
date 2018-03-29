@@ -22,9 +22,6 @@
 
 namespace TSC {
 
-    // forward-declare
-    class Pathmap;
-
     /**
      * A simple class that does nothing other than loading all of the game's
      * fonts from disk and keeping them around for the entire lifetime of the
@@ -33,7 +30,7 @@ namespace TSC {
     class FontStore
     {
     public:
-        FontStore(Pathmap& pathmap);
+        FontStore();
 
         sf::Font NormalFont;        ///< Normal game font.
         sf::Font BoldFont;          ///< Normal game font, bold variant.

@@ -19,7 +19,6 @@
  ******************************************************************************/
 
 #include "texture_cache.hpp"
-#include "application.hpp"
 #include "pathmap.hpp"
 #include <SFML/Graphics.hpp>
 
@@ -50,7 +49,7 @@ sf::Texture& TextureCache::Get(const std::string& relpath)
     if (m_cache.count(relpath) > 0)
         return m_cache[relpath];
     else {
-        Path p = gp_app->GetPathmap().GetPixmapsPath() / relpath;
+        Path p = Pathmap::GetPixmapsPath() / relpath;
         m_cache[relpath].loadFromFile(p.utf8_str());
         return m_cache[relpath];
     }

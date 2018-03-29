@@ -19,7 +19,6 @@
  ******************************************************************************/
 
 #include "font_store.hpp"
-#include "application.hpp"
 #include "pathmap.hpp"
 #include <pathie/path.hpp>
 #include <SFML/Graphics.hpp>
@@ -30,9 +29,9 @@ using namespace Pathie;
 /**
  * Loads all fonts the game needs from disk.
  */
-FontStore::FontStore(Pathmap& pathmap)
+FontStore::FontStore()
 {
-    Path dir = pathmap.GetFontPath();
+    Path dir = Pathmap::GetFontPath();
     NormalFont.loadFromFile(dir.join("DejaVuSans.ttf").utf8_str());
     BoldFont.loadFromFile(dir.join("DejaVuSans-Bold.ttf").utf8_str());
     MonospaceFont.loadFromFile(dir.join("DejaVuSansMono.ttf").utf8_str());

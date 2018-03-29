@@ -37,7 +37,6 @@ namespace TSC {
     // forward-declare
     class Scene;
     class Configuration;
-    class Pathmap;
     class TextureCache;
     class FontStore;
 
@@ -49,11 +48,6 @@ namespace TSC {
         inline const sf::RenderWindow& GetWindow()
         {
             return *mp_window;
-        }
-
-        inline const Pathmap& GetPathmap()
-        {
-            return *mp_pathmap;
         }
 
         inline const Configuration& GetConfig()
@@ -89,7 +83,6 @@ namespace TSC {
         sf::Clock* mp_game_clock;
         sf::Text* mp_fps;
         Configuration* mp_config;
-        Pathmap* mp_pathmap;
         TextureCache* mp_txtcache;
         FontStore* mp_fonts;
         nk_context* mp_gui;
