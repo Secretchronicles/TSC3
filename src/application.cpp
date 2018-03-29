@@ -25,6 +25,7 @@
 #include "texture_cache.hpp"
 #include "font_store.hpp"
 #include "gui.hpp"
+#include "util.hpp"
 #include "i18n.hpp"
 #include <SFML/Graphics.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
@@ -37,6 +38,8 @@ Application* TSC::gp_app = nullptr;
 
 Application::Application(int argc, char* argv[])
     : mp_window(nullptr),
+      mp_game_clock(nullptr),
+      mp_fps(nullptr),
       mp_config(nullptr),
       mp_pathmap(nullptr),
       mp_txtcache(nullptr),
@@ -44,7 +47,8 @@ Application::Application(int argc, char* argv[])
       mp_gui(nullptr),
       mp_gui_font(nullptr),
       m_terminate(false),
-      m_render_gui(true)
+      m_render_gui(true),
+      m_frame_time(0.0f)
 {
     xercesc::XMLPlatformUtils::Initialize();
 
@@ -52,6 +56,12 @@ Application::Application(int argc, char* argv[])
     mp_config = new Configuration(mp_pathmap->GetConfigPath());
     mp_txtcache = new TextureCache();
     mp_fonts = new FontStore(*mp_pathmap);
+    mp_game_clock = new sf::Clock();
+    mp_fps = new sf::Text();
+    mp_fps->setFont(mp_fonts->NormalFont);
+    mp_fps->setFillColor(sf::Color::Yellow);
+    mp_fps->setCharacterSize(TSC::GUI_FONT_SIZE);
+    mp_fps->setPosition(10, 10);
     SetupI18n(mp_pathmap->GetLocalePath().utf8_str().c_str());
 }
 
@@ -67,6 +77,8 @@ Application::~Application()
         delete mp_fonts;
     if (mp_pathmap)
         delete mp_pathmap;
+    if (mp_game_clock)
+        delete mp_game_clock;
 
     xercesc::XMLPlatformUtils::Terminate();
 }
@@ -80,6 +92,7 @@ int Application::MainLoop()
 
     // Game main loop
     while (!m_terminate && !m_scene_stack.empty()) {
+        m_frame_time = mp_game_clock->restart().asSeconds();
         unique_ptr<Scene>& p_scene = m_scene_stack.top();
 
         // TODO: Hand events to nuklear GUI
@@ -99,6 +112,11 @@ int Application::MainLoop()
             // Draw GUI on top of it, if enabled
             if (m_render_gui)
                 DrawGUI();
+
+            // Draw FPS
+            int fps = static_cast<int>(1.0f / m_frame_time);
+            mp_fps->setString(format(_("FPS: %d"), fps));
+            mp_window->draw(*mp_fps);
 
             // Flip buffers
             mp_window->display();

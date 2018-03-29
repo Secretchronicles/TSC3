@@ -28,6 +28,8 @@ struct nk_context;
 struct nk_user_font;
 namespace sf {
     class RenderWindow;
+    class Text;
+    class Clock;
 }
 
 namespace TSC {
@@ -84,6 +86,8 @@ namespace TSC {
 
     private:
         sf::RenderWindow* mp_window;
+        sf::Clock* mp_game_clock;
+        sf::Text* mp_fps;
         Configuration* mp_config;
         Pathmap* mp_pathmap;
         TextureCache* mp_txtcache;
@@ -92,6 +96,7 @@ namespace TSC {
         nk_user_font* mp_gui_font;
         bool m_terminate;
         bool m_render_gui;
+        float m_frame_time; // How long executing the last frame took in total, in seconds.
         std::stack<std::unique_ptr<Scene>> m_scene_stack;
 
         void OpenWindow();
