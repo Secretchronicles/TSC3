@@ -84,3 +84,12 @@ Path Pathmap::GetLocalePath() const {
     // This must match where cmake places the MO files.
     return GetDataPath() / "translations";
 }
+
+/**
+ * Returns the absolute path to the directory where TSC's
+ * font files are stored. This directory should be assumed
+ * to be read-only.
+ */
+Path Pathmap::GetFontPath() const {
+    return GetDataPath() / "fonts";
+}

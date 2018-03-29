@@ -18,24 +18,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef TSC_PATHMAP_HPP
-#define TSC_PATHMAP_HPP
-#include <pathie/path.hpp>
+#include <SFML/Graphics.hpp>
 
 namespace TSC {
 
-    class Pathmap {
-    public:
-        Pathmap();
+    // forward-declare
+    class Pathmap;
 
-        Pathie::Path GetConfigPath() const;
-        Pathie::Path GetDataPath() const;
-        Pathie::Path GetPixmapsPath() const;
-        Pathie::Path GetLocalePath() const;
-        Pathie::Path GetMusicPath() const;
-        Pathie::Path GetFontPath() const;
+    /**
+     * A simple class that does nothing other than loading all of the game's
+     * fonts from disk and keeping them around for the entire lifetime of the
+     * game. Access to font members directly.
+     */
+    class FontStore
+    {
+    public:
+        FontStore(Pathmap& pathmap);
+
+        sf::Font NormalFont;        ///< Normal game font.
+        sf::Font BoldFont;          ///< Normal game font, bold variant.
+        sf::Font MonospaceFont;     ///< Monospace font.
+        sf::Font MonospaceBoldFont; ///< Monospace font, bold variant.
     };
 
 }
-
-#endif /* TSC_PATHMAP_HPP */

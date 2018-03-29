@@ -35,6 +35,7 @@ namespace TSC {
     class Configuration;
     class Pathmap;
     class TextureCache;
+    class FontStore;
 
     class Application {
     public:
@@ -61,8 +62,15 @@ namespace TSC {
             return *mp_txtcache;
         }
 
+        inline FontStore& GetFontStore()
+        {
+            return *mp_fonts;
+        }
+
         int MainLoop();
         void Terminate();
+        inline void EnableGUI() { m_render_gui = true; }
+        inline void DisableGUI() { m_render_gui = false; }
 
         std::unique_ptr<Scene> PopScene();
         void PushScene(std::unique_ptr<Scene> p_scene);
@@ -72,6 +80,7 @@ namespace TSC {
         Configuration* mp_config;
         Pathmap* mp_pathmap;
         TextureCache* mp_txtcache;
+        FontStore* mp_fonts;
         bool m_terminate;
         std::stack<std::unique_ptr<Scene>> m_scene_stack;
 

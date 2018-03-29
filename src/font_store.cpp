@@ -18,24 +18,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef TSC_PATHMAP_HPP
-#define TSC_PATHMAP_HPP
+#include "font_store.hpp"
+#include "application.hpp"
+#include "pathmap.hpp"
 #include <pathie/path.hpp>
+#include <SFML/Graphics.hpp>
 
-namespace TSC {
+using namespace TSC;
+using namespace Pathie;
 
-    class Pathmap {
-    public:
-        Pathmap();
-
-        Pathie::Path GetConfigPath() const;
-        Pathie::Path GetDataPath() const;
-        Pathie::Path GetPixmapsPath() const;
-        Pathie::Path GetLocalePath() const;
-        Pathie::Path GetMusicPath() const;
-        Pathie::Path GetFontPath() const;
-    };
-
+/**
+ * Loads all fonts the game needs from disk.
+ */
+FontStore::FontStore(Pathmap& pathmap)
+{
+    Path dir = pathmap.GetFontPath();
+    NormalFont.loadFromFile(dir.join("DejaVuSans.ttf").utf8_str());
+    BoldFont.loadFromFile(dir.join("DejaVuSans-Bold.ttf").utf8_str());
+    MonospaceFont.loadFromFile(dir.join("DejaVuSansMono.ttf").utf8_str());
+    MonospaceBoldFont.loadFromFile(dir.join("DejaVuSansMono-Bold.ttf").utf8_str());
 }
-
-#endif /* TSC_PATHMAP_HPP */

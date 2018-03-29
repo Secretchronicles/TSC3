@@ -146,6 +146,8 @@ install(DIRECTORY ${TSC_SOURCE_DIR}/data/pixmaps
   DESTINATION ${CMAKE_INSTALL_DATADIR}/tsc3)
 install(DIRECTORY ${TSC_SOURCE_DIR}/data/music
   DESTINATION ${CMAKE_INSTALL_DATADIR}/tsc3)
+install(DIRECTORY ${TSC_SOURCE_DIR}/data/fonts
+  DESTINATION ${CMAKE_INSTALL_DATADIR}/tsc3)
 
 foreach(pofile ${po_files})
   get_filename_component(lang ${pofile} NAME_WE)
