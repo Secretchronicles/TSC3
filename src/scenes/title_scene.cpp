@@ -22,6 +22,8 @@
 #include "../application.hpp"
 #include "../texture_cache.hpp"
 #include "../pathmap.hpp"
+#include "../gui.hpp"
+#include "../i18n.hpp"
 
 using namespace std;
 using namespace TSC;
@@ -43,6 +45,25 @@ TitleScene::~TitleScene()
 
 bool TitleScene::Update()
 {
+    nk_context* p_ctx = gp_app->GetGUI();
+
+    if (nk_begin(p_ctx, _("Title Menu"), nk_rect(500, 300, 200, 400), NK_WINDOW_BORDER|NK_WINDOW_NO_INPUT)) {
+        nk_layout_row_dynamic(p_ctx, 50, 1);
+        if (nk_button_label(p_ctx, _("Start"))) {
+            // TODO: Event handling
+        }
+        if (nk_button_label(p_ctx, _("Levels"))) {
+            // TODO: Event handling
+        }
+        if (nk_button_label(p_ctx, _("Settings"))) {
+            // TODO: Event handling
+        }
+        if (nk_button_label(p_ctx, _("Quit"))) {
+            // TODO: Event handling
+        }
+    }
+    nk_end(p_ctx);
+
     return true;
 }
 
