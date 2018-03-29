@@ -37,7 +37,7 @@ void TSC::warn(const std::string& msg)
  * This function calls vsnprintf() for the actual formatting operation, so
  * look in that function's documentation for the format specifiers.
  */
-string format(const string& spec, ...)
+string TSC::format(const string& spec, ...)
 {
     va_list ap;
     int len      = spec.size() + 4096; // 4096 are an educated guess for what's likely needed
