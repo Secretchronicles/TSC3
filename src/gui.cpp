@@ -93,6 +93,7 @@ void TSC::DrawNKGUI(struct nk_context* p_ctx, sf::RenderWindow* p_window)
             rect.setSize(sf::Vector2f(r->w, r->h));
             rect.setOutlineColor(NKColor2SFColor(r->color));
             rect.setOutlineThickness(r->line_thickness);
+            rect.setFillColor(sf::Color::Transparent);
             // TODO: Round corners: r->rounding
             p_window->draw(rect);
         } break;
@@ -114,14 +115,14 @@ void TSC::DrawNKGUI(struct nk_context* p_ctx, sf::RenderWindow* p_window)
             circle.setRadius(radius);
             circle.setOutlineColor(NKColor2SFColor(c->color));
             circle.setOutlineThickness(c->line_thickness);
+            circle.setFillColor(sf::Color::Transparent);
             p_window->draw(circle);
         } break;
         case NK_COMMAND_CIRCLE_FILLED: {
-            // nuklear describes a circle as top-left corner plus width/height as if it were a rectangle
             const struct nk_command_circle_filled* c = (const struct nk_command_circle_filled*) p_cmd;
             float radius = static_cast<float>(c->w)/2.0f;
             sf::CircleShape circle;
-            circle.setPosition(c->x + radius, c->y + radius);
+            circle.setPosition(c->x, c->y);
             circle.setRadius(radius);
             circle.setFillColor(NKColor2SFColor(c->color));
             p_window->draw(circle);
@@ -134,6 +135,7 @@ void TSC::DrawNKGUI(struct nk_context* p_ctx, sf::RenderWindow* p_window)
             triangle.setPoint(2, sf::Vector2f(t->c.x, t->c.y));
             triangle.setOutlineColor(NKColor2SFColor(t->color));
             triangle.setOutlineThickness(t->line_thickness);
+            triangle.setFillColor(sf::Color::Transparent);
             p_window->draw(triangle);
         } break;
         case NK_COMMAND_TRIANGLE_FILLED: {
@@ -153,6 +155,7 @@ void TSC::DrawNKGUI(struct nk_context* p_ctx, sf::RenderWindow* p_window)
             }
             polygon.setOutlineColor(NKColor2SFColor(p->color));
             polygon.setOutlineThickness(p->line_thickness);
+            polygon.setFillColor(sf::Color::Transparent);
             p_window->draw(polygon);
         } break;
         case NK_COMMAND_POLYGON_FILLED: {
