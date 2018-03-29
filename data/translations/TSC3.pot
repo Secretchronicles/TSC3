@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: TSC3\n"
 "Report-Msgid-Bugs-To: tsc-devel@lists.secretchronicles.org\n"
-"POT-Creation-Date: 2018-03-25 17:46+0200\n"
+"POT-Creation-Date: 2018-03-29 20:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,32 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: ../../src/application.cpp:118
+#, c-format
+msgid "FPS: %d"
+msgstr ""
+
 #. TRANS: This is the window's title.
-#: ../../src/application.cpp:116
+#: ../../src/application.cpp:163
 msgid "The Secret Chronicles of Dr. M."
+msgstr ""
+
+#: ../../src/scenes/title_scene.cpp:50
+msgid "Title Menu"
+msgstr ""
+
+#: ../../src/scenes/title_scene.cpp:52
+msgid "Start"
+msgstr ""
+
+#: ../../src/scenes/title_scene.cpp:55
+msgid "Levels"
+msgstr ""
+
+#: ../../src/scenes/title_scene.cpp:58
+msgid "Settings"
+msgstr ""
+
+#: ../../src/scenes/title_scene.cpp:61
+msgid "Quit"
 msgstr ""
