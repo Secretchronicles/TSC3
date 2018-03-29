@@ -24,6 +24,8 @@
 #include <stack>
 
 // forward-declare
+struct nk_context;
+struct nk_user_font;
 namespace sf {
     class RenderWindow;
 }
@@ -81,10 +83,16 @@ namespace TSC {
         Pathmap* mp_pathmap;
         TextureCache* mp_txtcache;
         FontStore* mp_fonts;
+        nk_context* mp_gui;
+        nk_user_font* mp_gui_font;
         bool m_terminate;
+        bool m_render_gui;
         std::stack<std::unique_ptr<Scene>> m_scene_stack;
 
         void OpenWindow();
+        void InitGUI();
+        void CleanupGUI();
+        void DrawGUI();
     };
 
     /**

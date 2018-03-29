@@ -24,6 +24,7 @@
 #include "scenes/title_scene.hpp"
 #include "texture_cache.hpp"
 #include "font_store.hpp"
+#include "gui.hpp"
 #include "i18n.hpp"
 #include <SFML/Graphics.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
@@ -40,7 +41,10 @@ Application::Application(int argc, char* argv[])
       mp_pathmap(nullptr),
       mp_txtcache(nullptr),
       mp_fonts(nullptr),
+      mp_gui(nullptr),
+      mp_gui_font(nullptr),
       m_terminate(false),
+      m_render_gui(true)
 {
     xercesc::XMLPlatformUtils::Initialize();
 
@@ -70,6 +74,8 @@ Application::~Application()
 int Application::MainLoop()
 {
     OpenWindow();
+    InitGUI();
+
     m_scene_stack.push(unique_ptr<TitleScene>(new TitleScene()));
 
     // Game main loop
@@ -82,7 +88,15 @@ int Application::MainLoop()
         // Allow a scene to destroy itself by returning false from Update().
         if (p_scene->Update()) {
             mp_window->clear(sf::Color::Black);
+
+            // Draw scene
             p_scene->Draw(mp_window);
+
+            // Draw GUI on top of it, if enabled
+            if (m_render_gui)
+                DrawGUI();
+
+            // Flip buffers
             mp_window->display();
         }
         else
@@ -95,6 +109,7 @@ int Application::MainLoop()
         m_scene_stack.pop();
     }
 
+    CleanupGUI();
     mp_window->close();
 
     return 0;
@@ -129,4 +144,27 @@ void Application::OpenWindow()
     if (mp_config->enable_vsync) {
         mp_window->setVerticalSyncEnabled(true);
     }
+}
+
+void Application::InitGUI()
+{
+    mp_gui                    = new nk_context;
+    mp_gui_font               = new nk_user_font;
+    mp_gui_font->userdata.ptr = &mp_fonts->NormalFont;
+    mp_gui_font->height       = TSC::GUI_FONT_SIZE;
+    mp_gui_font->width        = TSC::CalculateGUIFontWidth;
+    nk_init_default(mp_gui, mp_gui_font);
+}
+
+void Application::CleanupGUI()
+{
+    nk_free(mp_gui);
+    delete mp_gui_font;
+    delete mp_gui;
+    mp_gui = nullptr;
+}
+
+void Application::DrawGUI()
+{
+    DrawNKGUI(mp_gui, mp_window);
 }
