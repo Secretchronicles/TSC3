@@ -24,7 +24,6 @@
 
 #define NK_IMPLEMENTATION
 #include "gui.hpp"
-#include "application.hpp"
 #include "pathmap.hpp"
 #include <pathie/path.hpp>
 #include <SFML/Graphics.hpp>
