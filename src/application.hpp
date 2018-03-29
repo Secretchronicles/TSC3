@@ -24,8 +24,6 @@
 #include <stack>
 
 // forward-declare
-struct nk_context;
-struct nk_user_font;
 namespace sf {
     class RenderWindow;
     class Text;
@@ -36,7 +34,6 @@ namespace TSC {
 
     // forward-declare
     class Scene;
-    class FontStore;
 
     class Application {
     public:
@@ -48,20 +45,8 @@ namespace TSC {
             return *mp_window;
         }
 
-        inline FontStore& GetFontStore()
-        {
-            return *mp_fonts;
-        }
-
-        inline nk_context* GetGUI()
-        {
-            return mp_gui;
-        }
-
         int MainLoop();
         void Terminate();
-        inline void EnableGUI() { m_render_gui = true; }
-        inline void DisableGUI() { m_render_gui = false; }
 
         std::unique_ptr<Scene> PopScene();
         void PushScene(std::unique_ptr<Scene> p_scene);
@@ -70,18 +55,11 @@ namespace TSC {
         sf::RenderWindow* mp_window;
         sf::Clock* mp_game_clock;
         sf::Text* mp_fps;
-        FontStore* mp_fonts;
-        nk_context* mp_gui;
-        nk_user_font* mp_gui_font;
         bool m_terminate;
-        bool m_render_gui;
         float m_frame_time; // How long executing the last frame took in total, in seconds.
         std::stack<std::unique_ptr<Scene>> m_scene_stack;
 
         void OpenWindow();
-        void InitGUI();
-        void CleanupGUI();
-        void DrawGUI();
     };
 
     /**

@@ -58,15 +58,47 @@
 
 // forward-declare
 namespace sf {
+    class Font;
+    class Event; // The SFML docs incorrectly state that this is a union; it isn't, it's a class containing a member and an unnamed union.
     class RenderWindow;
 }
 
 namespace TSC {
-    /// Normal GUI font size in pixels.
-    const int GUI_FONT_SIZE = 16;
 
-    void DrawNKGUI(struct nk_context* p_ctx, sf::RenderWindow* p_window);
-    float CalculateGUIFontWidth(nk_handle handle, float height, const char* text, int textlen);
+    /**
+     * This namespace contains the GUI system, i.e. the in-game system for the menus and such.
+     * It doesn't have anything to do with setting up the game window itself, that falls into
+     * SFML's responsibility and is done in application.cpp.
+     *
+     * The order in which functions from this namespace have to be called is:
+     *
+     * 1. Init()
+     * 2. In the main loop:
+     *   1. ProcessEvent() for every event received from the user
+     *   2. Get(), everytime you want to construct a GUI window, typically in a scene
+     *   3. Draw()
+     * 3. Cleanup()
+     *
+     * The Application class is responsible for calling everything but the Get() function,
+     * which should be called from the respective scenes.
+     */
+    namespace GUI {
+        /// Normal GUI font size in pixels.
+        const int NORMAL_FONT_SIZE = 16;
+
+        void Init();
+        void Cleanup();
+        void ProcessEvent(sf::Event& event);
+        void Draw(sf::RenderWindow& window);
+
+        nk_context* Get();
+
+        // The fonts used in the game.
+        extern sf::Font NormalFont;
+        extern sf::Font BoldFont;
+        extern sf::Font MonospaceFont;
+        extern sf::Font MonospaceBoldFont;
+    }
 }
 
 #endif

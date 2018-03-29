@@ -25,23 +25,23 @@
 using namespace std;
 using namespace TSC;
 
-/*
- * This function contains the event loop, i.e. it retrieves all events
- * SFML accumulated for the given window and then calls the virtual
- * ProcessEvent() function to let the scene handle a specific event.
+/**
+ * Override this function if you need user input. It gets
+ * passed one event at a time.
  *
- * This function also handles global events that always do the same
- * regardless of the current scene.
+ * Because this function in its implementation in the Scene class also
+ * handles global events that always do the same regardless of the
+ * current scene, you are required to call the parent class’ implementation
+ * of this method when overriding this.
  */
-void Scene::ProcessEvents(sf::RenderWindow* p_window)
+void Scene::ProcessEvent(sf::Event& event)
 {
-    sf::Event event;
-    while (p_window->pollEvent(event)) {
-        switch (event.type) {
-        case sf::Event::Closed: // Window closed
-            gp_app->Terminate();
-        default:
-            ProcessEvent(event);
-        }
+    switch (event.type) {
+    case sf::Event::Closed: // Window closed
+        gp_app->Terminate();
+        break;
+    default:
+        // Nothing
+        break;
     }
 }

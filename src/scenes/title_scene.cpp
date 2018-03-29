@@ -19,7 +19,6 @@
  ******************************************************************************/
 
 #include "title_scene.hpp"
-#include "../application.hpp"
 #include "../texture_cache.hpp"
 #include "../pathmap.hpp"
 #include "../gui.hpp"
@@ -45,7 +44,7 @@ TitleScene::~TitleScene()
 
 bool TitleScene::Update()
 {
-    nk_context* p_ctx = gp_app->GetGUI();
+    nk_context* p_ctx = GUI::Get();
 
     if (nk_begin(p_ctx, _("Title Menu"), nk_rect(500, 300, 200, 400), NK_WINDOW_BORDER|NK_WINDOW_NO_INPUT)) {
         nk_layout_row_dynamic(p_ctx, 50, 1);

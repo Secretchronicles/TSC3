@@ -23,7 +23,6 @@
 #include "settings.hpp"
 #include "scenes/title_scene.hpp"
 #include "texture_cache.hpp"
-#include "font_store.hpp"
 #include "gui.hpp"
 #include "util.hpp"
 #include "i18n.hpp"
@@ -40,34 +39,26 @@ Application::Application(int argc, char* argv[])
     : mp_window(nullptr),
       mp_game_clock(nullptr),
       mp_fps(nullptr),
-      mp_fonts(nullptr),
-      mp_gui(nullptr),
-      mp_gui_font(nullptr),
       m_terminate(false),
-      m_render_gui(true),
       m_frame_time(0.0f)
 {
     xercesc::XMLPlatformUtils::Initialize();
-    Settings::Load();
 
-    mp_fonts = new FontStore();
     mp_game_clock = new sf::Clock();
     mp_fps = new sf::Text();
-    mp_fps->setFont(mp_fonts->NormalFont);
-    mp_fps->setFillColor(sf::Color::Yellow);
-    mp_fps->setCharacterSize(TSC::GUI_FONT_SIZE);
-    mp_fps->setPosition(10, 10);
+
     SetupI18n(Pathmap::GetLocalePath().utf8_str().c_str());
+    Settings::Load();
+    GUI::Init();
 }
 
 Application::~Application()
 {
+    GUI::Cleanup();
     Settings::Save();
 
     if (mp_window)
         delete mp_window;
-    if (mp_fonts)
-        delete mp_fonts;
     if (mp_game_clock)
         delete mp_game_clock;
 
@@ -77,7 +68,11 @@ Application::~Application()
 int Application::MainLoop()
 {
     OpenWindow();
-    InitGUI();
+
+    mp_fps->setFont(GUI::NormalFont);
+    mp_fps->setFillColor(sf::Color::Yellow);
+    mp_fps->setCharacterSize(TSC::GUI::NORMAL_FONT_SIZE);
+    mp_fps->setPosition(10, 10);
 
     m_scene_stack.push(unique_ptr<TitleScene>(new TitleScene()));
 
@@ -86,12 +81,12 @@ int Application::MainLoop()
         m_frame_time = mp_game_clock->restart().asSeconds();
         unique_ptr<Scene>& p_scene = m_scene_stack.top();
 
-        // TODO: Hand events to nuklear GUI
-        nk_input_begin(mp_gui);
-        nk_input_end(mp_gui);
-
         // Poll events from SFML
-        p_scene->ProcessEvents(mp_window);
+        sf::Event event;
+        while (mp_window->pollEvent(event)) {
+            GUI::ProcessEvent(event);
+            p_scene->ProcessEvent(event);
+        }
 
         // Allow a scene to destroy itself by returning false from Update().
         if (p_scene->Update()) {
@@ -100,9 +95,8 @@ int Application::MainLoop()
             // Draw scene
             p_scene->Draw(mp_window);
 
-            // Draw GUI on top of it, if enabled
-            if (m_render_gui)
-                DrawGUI();
+            // Draw GUI on top of it
+            GUI::Draw(*mp_window);
 
             // Draw FPS
             int fps = static_cast<int>(1.0f / m_frame_time);
@@ -122,7 +116,6 @@ int Application::MainLoop()
         m_scene_stack.pop();
     }
 
-    CleanupGUI();
     mp_window->close();
 
     return 0;
@@ -157,27 +150,4 @@ void Application::OpenWindow()
     if (Settings::enable_vsync) {
         mp_window->setVerticalSyncEnabled(true);
     }
-}
-
-void Application::InitGUI()
-{
-    mp_gui                    = new nk_context;
-    mp_gui_font               = new nk_user_font;
-    mp_gui_font->userdata.ptr = &mp_fonts->NormalFont;
-    mp_gui_font->height       = TSC::GUI_FONT_SIZE;
-    mp_gui_font->width        = TSC::CalculateGUIFontWidth;
-    nk_init_default(mp_gui, mp_gui_font);
-}
-
-void Application::CleanupGUI()
-{
-    nk_free(mp_gui);
-    delete mp_gui_font;
-    delete mp_gui;
-    mp_gui = nullptr;
-}
-
-void Application::DrawGUI()
-{
-    DrawNKGUI(mp_gui, mp_window);
 }
