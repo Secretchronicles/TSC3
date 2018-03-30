@@ -171,7 +171,7 @@ void GUI::ProcessEvent(sf::Event& event)
 
     nk_input_begin(&s_gui_context);
 
-    struct nk_vec2 scrollvec;
+    static struct nk_vec2 scrollvec;
     switch (event.type) {
     case sf::Event::MouseMoved:
         nk_input_motion(&s_gui_context, event.mouseMove.x, event.mouseMove.y);
