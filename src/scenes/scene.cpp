@@ -25,6 +25,12 @@
 using namespace std;
 using namespace TSC;
 
+Scene::Scene()
+    : m_finish(false)
+{
+    //
+}
+
 /**
  * Override this function if you need user input. It gets
  * passed one event at a time.
@@ -44,4 +50,22 @@ void Scene::ProcessEvent(sf::Event& event)
         // Nothing
         break;
     }
+}
+
+/**
+ * Tells the game that this scene is finished. This effect cannot
+ * be undone. Once the main loop executes its next iteration, the
+ * scene will be popped off the event stack.
+ */
+void Scene::Finish()
+{
+    m_finish = true;
+}
+
+/**
+ * Returns true after Finish() was called.
+ */
+bool Scene::HasFinished() const
+{
+    return m_finish;
 }

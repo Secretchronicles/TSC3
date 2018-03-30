@@ -83,6 +83,12 @@ int Application::MainLoop()
         m_frame_time = m_game_clock.restart().asSeconds();
         unique_ptr<Scene>& p_scene = m_scene_stack.top();
 
+        // Remove top scene and redo if it's finished.
+        if (p_scene->HasFinished()) {
+            m_scene_stack.pop();
+            continue;
+        }
+
         // Poll events from SFML
         sf::Event event;
         while (m_window.pollEvent(event)) {
@@ -90,26 +96,26 @@ int Application::MainLoop()
             p_scene->ProcessEvent(event);
         }
 
-        // Allow a scene to destroy itself by returning false from Update().
-        if (p_scene->Update(m_window)) {
-            m_window.clear(sf::Color::Black);
+        p_scene->DoGUI();
+        p_scene->Update(m_window);
 
             // Draw scene
-            p_scene->Draw(m_window);
+        m_window.clear(sf::Color::Black);
+        p_scene->Draw(m_window);
 
-            // Draw GUI on top of it
-            GUI::Draw(m_window);
+        // Draw GUI on top of it
+        GUI::Draw(m_window);
 
-            // Draw FPS
-            int fps = static_cast<int>(1.0f / m_frame_time);
-            m_fps.setString(sformat(_("FPS: %d"), fps));
-            m_window.draw(m_fps);
+        // Draw FPS
+        int fps = static_cast<int>(1.0f / m_frame_time);
+        m_fps.setString(sformat(_("FPS: %d"), fps));
+        m_window.draw(m_fps);
 
-            // Flip buffers
-            m_window.display();
-        }
-        else
-            m_scene_stack.pop();
+        // Flip buffers
+        m_window.display();
+
+        // Late update for special tasks.
+        p_scene->LateUpdate();
     }
 
     // If the mainloop was ended by m_terminate, end all the scenes

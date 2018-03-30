@@ -42,6 +42,15 @@ TitleScene::~TitleScene()
     m_music.stop();
 }
 
+void TitleScene::ProcessEvent(sf::Event& event)
+{
+    Scene::ProcessEvent(event);
+
+    if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+        Finish();
+    }
+}
+
 bool TitleScene::Update(const sf::RenderWindow&)
 {
     nk_context* p_ctx = GUI::Get();
