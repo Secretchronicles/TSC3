@@ -27,9 +27,6 @@ using namespace std;
 /// Entry point to the programme.
 int main(int argc, char* argv[])
 {
-    // Set to environment locale
-    locale::global(locale(""));
-
     Application app(argc, argv);
     return app.MainLoop();
 }

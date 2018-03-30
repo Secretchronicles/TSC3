@@ -26,21 +26,21 @@
 
 // Pass this string to Gettext for translation.
 // Returns const char* encoded in UTF-8.
-#define _(String) gettext(String)
+#define _(str) gettext(str)
 // Pass this string to Gettext for translation.
 // Returns an sf::String (UTF-32 encoded) suitable for direct
 // use anywhere SFML expects a string to draw.
 // Note: This needs to be a function due to the sf::String conversion.
 sf::String S_(const std::string& str);
 // Same as _(), but for strings that need pluralisation.
-#define PL_(Singular, Plural, Num) ngettext((Singular), (Plural), (Num))
+#define PL_(singular, plural, num) ngettext((singular), (plural), (num))
 // Translates with context where ambigous (see section 11.2.5 of
 // the Gettext manual).
-#define C_(Context, String) pgettext(Context, String)
+#define C_(context, str) pgettext(context, str)
 
 namespace TSC {
 
-    void SetupI18n(const char* localedir);
+    void SetupI18n();
 
 }
 

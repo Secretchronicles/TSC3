@@ -19,6 +19,7 @@
  ******************************************************************************/
 
 #include "i18n.hpp"
+#include "pathmap.hpp"
 #include <errno.h>
 #include <string>
 #include <SFML/System.hpp>
@@ -29,15 +30,23 @@ using namespace std;
 // to detect them as belonging to this programme.
 #define TSC_GETTEXT_DOMAIN "TSC3"
 
-/// Initialises Gettext. You have to adapt to the environment locale
-/// before you call this. `localdir` has to be encoded in UTF-8.
-void TSC::SetupI18n(const char* localedir)
+/// Initialises Gettext. This function also changes the programme's
+/// global locale to that of the environment.
+void TSC::SetupI18n()
 {
-    if (!bindtextdomain(TSC_GETTEXT_DOMAIN, localedir)) {
+    // Set programme to environment locale
+    locale::global(locale(""));
+
+    // Retrieve path where the translation files are stored
+    std::string localedir = Pathmap::GetLocalePath().utf8_str();
+
+    // Tell Gettext about that path
+    if (!bindtextdomain(TSC_GETTEXT_DOMAIN, localedir.c_str())) {
         int errsav = errno;
-        throw(string("Failed to load translations from path: ") + string(localedir) + ": " + strerror(errsav));
+        throw(string("Failed to load translations from path: ") + localedir + ": " + strerror(errsav));
     }
 
+    // Activate translations in the TSC domain
     if (!textdomain(TSC_GETTEXT_DOMAIN)) {
         int errsav = errno;
         throw(string("Failed to bind Gettext domain: ") + strerror(errsav));

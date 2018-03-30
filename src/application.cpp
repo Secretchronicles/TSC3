@@ -50,9 +50,9 @@ Application::Application(int argc, char* argv[])
     if (sp_app)
         throw(std::runtime_error("Can't have more than one Application instance!"));
 
+    SetupI18n(); // Always call this first. It sets the programme's global locale.
     xercesc::XMLPlatformUtils::Initialize();
 
-    SetupI18n(Pathmap::GetLocalePath().utf8_str().c_str());
     Settings::Load();
     GUI::Init();
 
