@@ -21,6 +21,7 @@
 #include "title_scene.hpp"
 #include "../texture_cache.hpp"
 #include "../pathmap.hpp"
+#include "../audio.hpp"
 #include "../gui.hpp"
 #include "../i18n.hpp"
 
@@ -32,14 +33,11 @@ TitleScene::TitleScene()
     m_background.setTexture(TextureCache::Get("misc/title.png"));
     m_background.setPosition(sf::Vector2f(0, 0));
 
-    m_music.openFromFile((Pathmap::GetMusicPath() / "title.ogg").utf8_str());
-    m_music.setLoop(true);
-    m_music.play();
+    Audio::PlayMusic("title.ogg");
 }
 
 TitleScene::~TitleScene()
 {
-    m_music.stop();
 }
 
 void TitleScene::ProcessEvent(sf::Event& event)

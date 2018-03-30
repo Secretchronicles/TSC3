@@ -23,6 +23,7 @@
 #include "settings.hpp"
 #include "scenes/title_scene.hpp"
 #include "texture_cache.hpp"
+#include "audio.hpp"
 #include "gui.hpp"
 #include "util.hpp"
 #include "i18n.hpp"
@@ -99,7 +100,10 @@ int Application::MainLoop()
         p_scene->DoGUI();
         p_scene->Update(m_window);
 
-            // Draw scene
+        // Update audio system (especially for fading)
+        Audio::Update();
+
+        // Draw scene
         m_window.clear(sf::Color::Black);
         p_scene->Draw(m_window);
 

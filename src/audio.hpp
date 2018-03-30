@@ -18,26 +18,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef TSC_TITLE_SCENE_HPP
-#define TSC_TITLE_SCENE_HPP
-#include "scene.hpp"
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
+#ifndef TSC_AUDIO_HPP
+#define TSC_AUDIO_HPP
+#include <string>
 
 namespace TSC {
 
-    class TitleScene: public Scene {
-    public:
-        TitleScene();
-        virtual ~TitleScene();
-
-        virtual void ProcessEvent(sf::Event& event);
-        virtual bool Update(const sf::RenderWindow& stage);
-        virtual void Draw(sf::RenderWindow& stage) const;
-
-        sf::Sprite m_background;
-    };
+    namespace Audio {
+        void PlayMusic(const std::string& relpath, bool fade = false);
+        void PlaySound(const std::string& relpath);
+        void Update();
+    }
 
 }
 
-#endif /* TSC_TITLE_SCENE_HPP */
+#endif /* TSC_AUDIO_HPP */
