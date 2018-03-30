@@ -38,7 +38,7 @@ void Scene::ProcessEvent(sf::Event& event)
 {
     switch (event.type) {
     case sf::Event::Closed: // Window closed
-        gp_app->Terminate();
+        Application::Instance()->Terminate();
         break;
     default:
         // Nothing

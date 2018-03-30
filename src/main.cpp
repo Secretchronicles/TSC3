@@ -31,7 +31,5 @@ int main(int argc, char* argv[])
     locale::global(locale(""));
 
     Application app(argc, argv);
-    gp_app = &app;
-
     return app.MainLoop();
 }

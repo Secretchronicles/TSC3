@@ -31,8 +31,8 @@ namespace TSC {
         TitleScene();
         virtual ~TitleScene();
 
-        virtual bool Update();
-        virtual void Draw(sf::RenderWindow*) const;
+        virtual bool Update(const sf::RenderWindow& stage);
+        virtual void Draw(sf::RenderWindow& stage) const;
 
         sf::Sprite m_background;
         sf::Music m_music;

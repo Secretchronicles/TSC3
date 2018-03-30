@@ -22,28 +22,32 @@
 #define TSC_APPLICATION_HPP
 #include <memory>
 #include <stack>
-
-// forward-declare
-namespace sf {
-    class RenderWindow;
-    class Text;
-    class Clock;
-}
+#include <SFML/Graphics.hpp>
 
 namespace TSC {
 
     // forward-declare
     class Scene;
 
+    /**
+     * The Application class contains the game's most basic setup. It can
+     * mostly be seen as an OOP abstraction over the main() function that
+     * has a constructor and destructor for proper cleanup. It's a singleton
+     * class, which means that only ever one instance of it can be constructed;
+     * once done, this instance can be retrieved via the Instance() method. Any
+     * further attempt to construct a new instance will cause an exception.
+     *
+     * Additionally, this class serves as a container for those pieces of
+     * global information that were to small to warrant its own global object.
+     * For example, this class thus contains the FPS counter. It also holds the
+     * scene stack and owns the SFML game window.
+     */
     class Application {
     public:
+        static Application* Instance();
+
         Application(int argc, char* argv[]);
         ~Application();
-
-        inline const sf::RenderWindow& GetWindow()
-        {
-            return *mp_window;
-        }
 
         int MainLoop();
         void Terminate();
@@ -52,26 +56,15 @@ namespace TSC {
         void PushScene(std::unique_ptr<Scene> p_scene);
 
     private:
-        sf::RenderWindow* mp_window;
-        sf::Clock* mp_game_clock;
-        sf::Text* mp_fps;
         bool m_terminate;
         float m_frame_time; // How long executing the last frame took in total, in seconds.
+        sf::RenderWindow m_window;
+        sf::Clock m_game_clock;
+        sf::Text m_fps;
         std::stack<std::unique_ptr<Scene>> m_scene_stack;
 
         void OpenWindow();
     };
-
-    /**
-     * This is the one and only global pointer in TSC.
-     * It refers to the only Application instance around
-     * during programme run. This pointer is set to null
-     * while startup is not finished and only assigned
-     * after the Application instance has successfully
-     * been constructed.
-     */
-    extern Application* gp_app;
-
 }
 
 #endif /* TSC_APPLICATION_HPP */

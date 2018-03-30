@@ -32,35 +32,37 @@
 using namespace TSC;
 using namespace std;
 
-// extern declarations
-Application* TSC::gp_app = nullptr;
+static Application* sp_app = nullptr;
+
+/**
+ * Returns the singleton instance of this class. Note that this method
+ * returns a nullptr until the constructor has returned.
+ */
+Application* Application::Instance()
+{
+    return sp_app;
+}
 
 Application::Application(int argc, char* argv[])
-    : mp_window(nullptr),
-      mp_game_clock(nullptr),
-      mp_fps(nullptr),
-      m_terminate(false),
+    : m_terminate(false),
       m_frame_time(0.0f)
 {
-    xercesc::XMLPlatformUtils::Initialize();
+    if (sp_app)
+        throw(std::runtime_error("Can't have more than one Application instance!"));
 
-    mp_game_clock = new sf::Clock();
-    mp_fps = new sf::Text();
+    xercesc::XMLPlatformUtils::Initialize();
 
     SetupI18n(Pathmap::GetLocalePath().utf8_str().c_str());
     Settings::Load();
     GUI::Init();
+
+    sp_app = this;
 }
 
 Application::~Application()
 {
     GUI::Cleanup();
     Settings::Save();
-
-    if (mp_window)
-        delete mp_window;
-    if (mp_game_clock)
-        delete mp_game_clock;
 
     xercesc::XMLPlatformUtils::Terminate();
 }
@@ -69,42 +71,42 @@ int Application::MainLoop()
 {
     OpenWindow();
 
-    mp_fps->setFont(GUI::NormalFont);
-    mp_fps->setFillColor(sf::Color::Yellow);
-    mp_fps->setCharacterSize(TSC::GUI::NORMAL_FONT_SIZE);
-    mp_fps->setPosition(10, 10);
+    m_fps.setFont(GUI::NormalFont);
+    m_fps.setFillColor(sf::Color::Yellow);
+    m_fps.setCharacterSize(TSC::GUI::NORMAL_FONT_SIZE);
+    m_fps.setPosition(10, 10);
 
     m_scene_stack.push(unique_ptr<TitleScene>(new TitleScene()));
 
     // Game main loop
     while (!m_terminate && !m_scene_stack.empty()) {
-        m_frame_time = mp_game_clock->restart().asSeconds();
+        m_frame_time = m_game_clock.restart().asSeconds();
         unique_ptr<Scene>& p_scene = m_scene_stack.top();
 
         // Poll events from SFML
         sf::Event event;
-        while (mp_window->pollEvent(event)) {
+        while (m_window.pollEvent(event)) {
             GUI::ProcessEvent(event);
             p_scene->ProcessEvent(event);
         }
 
         // Allow a scene to destroy itself by returning false from Update().
-        if (p_scene->Update()) {
-            mp_window->clear(sf::Color::Black);
+        if (p_scene->Update(m_window)) {
+            m_window.clear(sf::Color::Black);
 
             // Draw scene
-            p_scene->Draw(mp_window);
+            p_scene->Draw(m_window);
 
             // Draw GUI on top of it
-            GUI::Draw(*mp_window);
+            GUI::Draw(m_window);
 
             // Draw FPS
             int fps = static_cast<int>(1.0f / m_frame_time);
-            mp_fps->setString(sformat(_("FPS: %d"), fps));
-            mp_window->draw(*mp_fps);
+            m_fps.setString(sformat(_("FPS: %d"), fps));
+            m_window.draw(m_fps);
 
             // Flip buffers
-            mp_window->display();
+            m_window.display();
         }
         else
             m_scene_stack.pop();
@@ -116,7 +118,7 @@ int Application::MainLoop()
         m_scene_stack.pop();
     }
 
-    mp_window->close();
+    m_window.close();
 
     return 0;
 }
@@ -144,10 +146,10 @@ void Application::OpenWindow()
     }
 
     // TRANS: This is the window's title.
-    mp_window = new sf::RenderWindow(mode, _("The Secret Chronicles of Dr. M."));
+    m_window.create(mode, _("The Secret Chronicles of Dr. M."));
 
     // Enable vsync if requested
     if (Settings::enable_vsync) {
-        mp_window->setVerticalSyncEnabled(true);
+        m_window.setVerticalSyncEnabled(true);
     }
 }

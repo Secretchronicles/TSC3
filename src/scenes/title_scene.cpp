@@ -42,7 +42,7 @@ TitleScene::~TitleScene()
     m_music.stop();
 }
 
-bool TitleScene::Update()
+bool TitleScene::Update(const sf::RenderWindow&)
 {
     nk_context* p_ctx = GUI::Get();
 
@@ -66,7 +66,7 @@ bool TitleScene::Update()
     return true;
 }
 
-void TitleScene::Draw(sf::RenderWindow* p_stage) const
+void TitleScene::Draw(sf::RenderWindow& stage) const
 {
-    p_stage->draw(m_background);
+    stage.draw(m_background);
 }

@@ -36,7 +36,7 @@ namespace TSC {
 
         /// Override this function if you need user input.
         /// It gets passed one event at a time.
-        virtual void ProcessEvent(sf::Event&);
+        virtual void ProcessEvent(sf::Event& event);
 
         /**
          * Update() shall update all logic in the scene, but not
@@ -44,10 +44,10 @@ namespace TSC {
          * method causes the main loop to pop the scene from the
          * scene stack without a subsequent call to Draw().
          */
-        virtual bool Update() = 0;
+        virtual bool Update(const sf::RenderWindow& stage) = 0;
         /// Draw() shall draw the updated scene onto the screen.
         /// Game logic updates should be in Update().
-        virtual void Draw(sf::RenderWindow* p_stage) const = 0;
+        virtual void Draw(sf::RenderWindow& stage) const = 0;
     };
 
 }
