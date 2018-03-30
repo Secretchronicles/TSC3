@@ -60,3 +60,20 @@ task :copyright do
   end
 
 end
+
+desc "List those files that do not conform to TSC's license requirements."
+task :licenses do
+  require "rexml/document"
+  require "rexml/xpath"
+  require "find"
+
+  Find.find("data") do |path|
+    next if path !~ /.xml$/
+
+    xml = REXML::Document.new(File.open(path, "r:UTF-8"))
+    if node = REXML::XPath.first(xml, "/assetinfo/customlicense")
+      printf "%-30s%s\n", "File", "License"
+      printf "%-30s%s\n", path, node.text.strip
+    end
+  end
+end
