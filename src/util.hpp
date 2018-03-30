@@ -27,6 +27,7 @@ namespace TSC {
     void warn(const std::string& msg);
     std::string format(const std::string& spec, ...);
     sf::String sformat(const std::string& spec, ...);
+    sf::String utf82sf(const std::string& utf8);
 }
 
 #endif /* TSC_UTIL_HPP */

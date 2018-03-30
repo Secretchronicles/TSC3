@@ -94,5 +94,14 @@ sf::String TSC::sformat(const string& spec, ...)
     std::string str = vaformat(spec, ap);
     va_end(ap);
 
-    return sf::String::fromUtf8(str.begin(), str.end());
+    return utf82sf(str);
+}
+
+/**
+ * Online convenience function for converting a UTF-8 encoded
+ * std::string into SFML's sf::String format (which uses UTF-32).
+ */
+sf::String TSC::utf82sf(const string& utf8)
+{
+    return sf::String::fromUtf8(utf8.begin(), utf8.end());
 }
