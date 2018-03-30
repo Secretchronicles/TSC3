@@ -50,6 +50,59 @@ static inline sf::Color NKColor2SFColor(struct nk_color color)
     return sf::Color(color.r, color.g, color.b, color.a);
 }
 
+// Converts the given SFML mouse button to a nuklear mouse button.
+static inline enum nk_buttons SFButton2NKButton(sf::Mouse::Button button)
+{
+    switch (button) {
+    case sf::Mouse::Button::Left:
+        return NK_BUTTON_LEFT;
+    case sf::Mouse::Button::Right:
+        return NK_BUTTON_RIGHT;
+    case sf::Mouse::Button::Middle:
+        return NK_BUTTON_MIDDLE;
+    default:
+        return NK_BUTTON_LEFT;
+    }
+}
+
+
+// Converts the given SFML key into a nuklear key.
+static enum nk_keys SFKey2NKKey(sf::Keyboard::Key key)
+{
+    switch (key) {
+    case sf::Keyboard::LControl: // fallthrough
+    case sf::Keyboard::RControl:
+        return NK_KEY_CTRL;
+    case sf::Keyboard::Delete:
+        return NK_KEY_DEL;
+    case sf::Keyboard::Return:
+        return NK_KEY_ENTER;
+    case sf::Keyboard::Tab:
+        return NK_KEY_TAB;
+    case sf::Keyboard::BackSpace:
+        return NK_KEY_BACKSPACE;
+    case sf::Keyboard::Up:
+        return NK_KEY_UP;
+    case sf::Keyboard::Down:
+        return NK_KEY_DOWN;
+    case sf::Keyboard::Left:
+        return NK_KEY_LEFT;
+    case sf::Keyboard::Right:
+        return NK_KEY_RIGHT;
+    case sf::Keyboard::Insert:
+        return NK_KEY_TEXT_INSERT_MODE;
+    case sf::Keyboard::Home:
+        return NK_KEY_TEXT_LINE_START;
+    case sf::Keyboard::End:
+        return NK_KEY_TEXT_LINE_END;
+    case sf::Keyboard::PageUp:
+        return NK_KEY_SCROLL_UP;
+    case sf::Keyboard::PageDown:
+        return NK_KEY_SCROLL_DOWN;
+    default:
+        return NK_KEY_NONE;
+    }
+}
 
 /**
  * Calculates the width of the given text in rendered form when the
@@ -111,13 +164,48 @@ nk_context* GUI::Get()
  *
  * \see Draw()
  */
-void GUI::ProcessEvent(sf::Event&)
+void GUI::ProcessEvent(sf::Event& event)
 {
     if (!s_gui_enabled)
         return;
 
     nk_input_begin(&s_gui_context);
-    // TODO: Actual forwarding
+
+    struct nk_vec2 scrollvec;
+    switch (event.type) {
+    case sf::Event::MouseMoved:
+        nk_input_motion(&s_gui_context, event.mouseMove.x, event.mouseMove.y);
+        break;
+    case sf::Event::MouseButtonPressed:
+        nk_input_button(&s_gui_context, SFButton2NKButton(event.mouseButton.button), event.mouseButton.x, event.mouseButton.y, 1);
+        break;
+    case sf::Event::MouseButtonReleased:
+        nk_input_button(&s_gui_context, SFButton2NKButton(event.mouseButton.button), event.mouseButton.x, event.mouseButton.y, 0);
+        break;
+    case sf::Event::MouseWheelScrolled:
+        scrollvec.x = scrollvec.y = 0;
+
+        if (event.mouseWheelScroll.wheel == sf::Mouse::Wheel::HorizontalWheel)
+            scrollvec.x = event.mouseWheelScroll.delta;
+        else // normal vertical wheel
+            scrollvec.y = event.mouseWheelScroll.delta;
+
+        nk_input_scroll(&s_gui_context, scrollvec);
+        break;
+    case sf::Event::KeyPressed:
+        nk_input_key(&s_gui_context, SFKey2NKKey(event.key.code), 1);
+        break;
+    case sf::Event::KeyReleased:
+        nk_input_key(&s_gui_context, SFKey2NKKey(event.key.code), 0);
+        break;
+    case sf::Event::TextEntered:
+        nk_input_unicode(&s_gui_context, event.text.unicode);
+        break;
+    default:
+        // Ignore
+        break;
+    }
+
     nk_input_end(&s_gui_context);
 }
 
