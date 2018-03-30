@@ -101,7 +101,7 @@ void Timer::Reset(int duration)
 float Timer::PercentOver()
 {
     float p = static_cast<float>(m_clock.getElapsedTime().asMilliseconds()) / static_cast<float>(m_duration_ms);
-    if (p > 100.0f)
+    if (p > 1.0f)
         return 100.0f;
     else
         return p * 100.0f;
