@@ -93,6 +93,11 @@ namespace TSC {
 
         nk_context* Get();
 
+        void Enable();
+        void Disable();
+        void Toggle();
+        bool IsEnabled();
+
         // The fonts used in the game.
         extern sf::Font NormalFont;
         extern sf::Font BoldFont;

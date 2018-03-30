@@ -31,9 +31,10 @@
 using namespace TSC;
 using Pathie::Path;
 
-// Global "nuklear" GUI information.
+// Global GUI information.
 static nk_context s_gui_context;
 static nk_user_font s_gui_font;
+static bool s_gui_enabled = true;
 
 // "extern" declarations
 sf::Font GUI::NormalFont;
@@ -112,6 +113,9 @@ nk_context* GUI::Get()
  */
 void GUI::ProcessEvent(sf::Event&)
 {
+    if (!s_gui_enabled)
+        return;
+
     nk_input_begin(&s_gui_context);
     // TODO: Actual forwarding
     nk_input_end(&s_gui_context);
@@ -128,6 +132,12 @@ void GUI::ProcessEvent(sf::Event&)
  */
 void GUI::Draw(sf::RenderWindow& window)
 {
+    if (!s_gui_enabled) {
+        // Frame clearing is still required, otherwise nuklear gets confused.
+        nk_clear(&s_gui_context);
+        return;
+    }
+
     const struct nk_command *p_cmd = nullptr;
 
     nk_foreach(p_cmd, &s_gui_context) {
@@ -271,5 +281,36 @@ void GUI::Draw(sf::RenderWindow& window)
         } // No default clause so the compiler can warn about missing values
     }
 
+    // Tell nuklear GUI drawing is over for this frame.
     nk_clear(&s_gui_context);
+}
+
+/// Enable the GUI after it was Disable()d.
+void GUI::Enable()
+{
+    s_gui_enabled = true;
+}
+
+/**
+ * Disable the GUI. You can enable it with Enable() again.
+ * Disabling the GUI causes the ProcessEvent() and Draw()
+ * functions to return early instead of actually executing
+ * their work. This can be used to improve performance where
+ * GUI information is not needed.
+ */
+void GUI::Disable()
+{
+    s_gui_enabled = false;
+}
+
+/// Toggle whether the GUI is enabled.
+void GUI::Toggle()
+{
+    s_gui_enabled = !s_gui_enabled;
+}
+
+/// Checks whether the GUI is currently enabled.
+bool GUI::IsEnabled()
+{
+    return s_gui_enabled;
 }
