@@ -79,11 +79,6 @@ void Audio::PlayMusic(const std::string& relpath, bool fade)
     }
 }
 
-void Audio::PlaySound(const std::string&)
-{
-    // TODO
-}
-
 /**
  * Update the audio system. Call this once a frame. This is required
  * because the fading uses an internal timer that needs to be checked

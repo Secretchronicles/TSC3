@@ -24,9 +24,16 @@
 
 namespace TSC {
 
+    /**
+     * This is TSC's audio system. It's currently pretty simple.
+     * Note it does not currently play sounds; see
+     * <https://www.sfml-dev.org/tutorials/2.4/audio-sounds.php>
+     * how to play sounds directly with SFML. For music, please do
+     * not use that facilities, but use the Audio::PlayMusic() function
+     * instead, which will do proper music fading when required.
+     */
     namespace Audio {
         void PlayMusic(const std::string& relpath, bool fade = false);
-        void PlaySound(const std::string& relpath);
         void Update();
     }
 
