@@ -76,7 +76,7 @@ int Application::MainLoop()
     m_fps.setCharacterSize(TSC::GUI::NORMAL_FONT_SIZE);
     m_fps.setPosition(10, 10);
 
-    m_scene_stack.push(unique_ptr<TitleScene>(new TitleScene()));
+    PushScene(unique_ptr<TitleScene>(new TitleScene()));
 
     // Game main loop
     while (!m_terminate && !m_scene_stack.empty()) {
@@ -158,4 +158,76 @@ void Application::OpenWindow()
     if (Settings::enable_vsync) {
         m_window.setVerticalSyncEnabled(true);
     }
+}
+
+/**
+ * Removes the topmost scene from the stack and returns it.
+ * Usually, you don't want to use this method; see the Scene
+ * class' docs. Instead, call Scene::Finish() on your scene so the
+ * mainloop takes care of popping your current scene off the
+ * stack.
+ *
+ * \returns The scene that was on the top of the scene stack.
+ *
+ * \remark If you do use this method, be very careful about the
+ * return value. If you call it from the currently active scene,
+ * it will return the pointer to the very scene that is currently
+ * executing, i.e., it's return value will be equal to the
+ * `this` pointer, just wrapped in a std::unique_ptr. If you
+ * let it go out of scope in such a situation (e.g., by not
+ * catering for the return value), unique_ptr's implementation will
+ * free the memory occupied by it, i.e., it will delete your
+ * `this` pointer while you're still executing a method on it!
+ * That is going to cause a segfault for obvious reasons, so, if
+ * calling this method from the active scene, do store the return
+ * value until you are done with your scene, then let it run out
+ * of scope to have unique_ptr clean things up for you.
+ *
+ * \see PushScene()
+ */
+unique_ptr<Scene> Application::PopScene()
+{
+    /* Vampires! Because std::stack doesn't support
+     * an atomic remove-from-top-and-return-that
+     * operation, this code draws out the the raw
+     * pointer from the unique_ptr at the top of
+     * the scene stack, then pops the now-empty unique_ptr
+     * off the stack, and then returns a newly constructed
+     * unique_ptr with the former top element. */
+    unique_ptr<Scene>& currscene = m_scene_stack.top();
+    Scene* rawptr = currscene.release(); // leaves currscene with a nullptr
+    m_scene_stack.pop();
+    return unique_ptr<Scene>(rawptr);
+}
+
+/**
+ * Pushes a new scene onto the scene stack. This method takes
+ * ownership of the object, i.e. you can't use what you passed
+ * as argument anymore after it returns (it uses std::move()).
+ *
+ * \remark C++ is smart enough to know that you can't reuse your
+ * unique_ptr if you construct it as the argument to this method.
+ * That is, you can ommit the explicit call to std::move() on
+ * the argument if you use this method like this:
+ *
+ * ~~~~~~~~~~~{c++}
+ * PushScene(unique_ptr<YourNextScene>(new YourNextScene()))
+ * ~~~~~~~~~~~
+ *
+ * If on the other hand you have pre-constructed your scene,
+ * you need to signal C++ that it's okay to give up the
+ * contents of the unique_ptr by wrapping the argument in
+ * std::move().
+ *
+ * ~~~~~~~~~~~{c++}
+ * unique_ptr<YourNextScene> pre_existing(new YourNextScene())
+ * PushScene(move(pre_existing))
+ * // pre_existing now contains a nullptr!
+ * ~~~~~~~~~~~
+ *
+ * \see PopScene().
+ */
+void Application::PushScene(unique_ptr<Scene> p_scene)
+{
+    m_scene_stack.push(move(p_scene));
 }
