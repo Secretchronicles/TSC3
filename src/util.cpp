@@ -23,6 +23,7 @@
 #include <cstdio>
 #include <cstdarg>
 #include <cstdlib>
+#include <pathie/path.hpp>
 #include <SFML/System.hpp>
 
 using namespace std;
@@ -98,10 +99,20 @@ sf::String TSC::sformat(const string& spec, ...)
 }
 
 /**
- * Online convenience function for converting a UTF-8 encoded
+ * Oneline convenience function for converting a UTF-8 encoded
  * std::string into SFML's sf::String format (which uses UTF-32).
  */
 sf::String TSC::utf82sf(const string& utf8)
 {
     return sf::String::fromUtf8(utf8.begin(), utf8.end());
+}
+
+/**
+ * Oneline convenience function for convering a Pathie::Path
+ * to a string in SFML's sf::String format (which is effectively
+ * a conversion from UTF-8 to UTF-32).
+ */
+sf::String TSC::path2sf(const Pathie::Path& path)
+{
+    return utf82sf(path.utf8_str());
 }

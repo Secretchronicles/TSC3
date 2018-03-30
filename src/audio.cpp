@@ -27,6 +27,7 @@
 
 using namespace TSC;
 using namespace std;
+using Pathie::Path;
 
 unique_ptr<sf::Music> sp_background_music(new sf::Music);
 unique_ptr<sf::Music> sp_next_music(new sf::Music);
@@ -48,11 +49,11 @@ Timer s_fade_timer;
 void Audio::PlayMusic(const std::string& relpath, bool fade)
 {
     if (!s_fade_timer.IsActive()) {
-        string music_path(Pathmap::GetMusicPath().join(relpath).utf8_str());
+        Path music_path = Pathmap::GetMusicPath() / relpath;
 
         if (fade) {
             sp_next_music->stop();
-            sp_next_music->openFromFile(utf82sf(music_path));
+            sp_next_music->openFromFile(path2sf(music_path));
             sp_next_music->setLoop(true);
             sp_next_music->setVolume(0);
             sp_next_music->play();
@@ -60,7 +61,7 @@ void Audio::PlayMusic(const std::string& relpath, bool fade)
             s_fade_timer.Reset(5000);
         } else {
             sp_background_music->stop();
-            sp_background_music->openFromFile(utf82sf(music_path));
+            sp_background_music->openFromFile(path2sf(music_path));
             sp_background_music->setLoop(true);
             sp_background_music->setVolume(100);
             sp_background_music->play();

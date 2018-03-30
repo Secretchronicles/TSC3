@@ -23,11 +23,17 @@
 #include <string>
 #include <SFML/System/String.hpp>
 
+// forward-declare
+namespace Pathie {
+    class Path;
+}
+
 namespace TSC {
     void warn(const std::string& msg);
     std::string format(const std::string& spec, ...);
     sf::String sformat(const std::string& spec, ...);
     sf::String utf82sf(const std::string& utf8);
+    sf::String path2sf(const Pathie::Path& path);
 }
 
 #endif /* TSC_UTIL_HPP */
