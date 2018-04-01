@@ -1,3 +1,23 @@
+/*******************************************************************************
+ * This file is part of TSC.
+ *
+ * TSC is a 2-dimensional platform game.
+ * Copyright © 2018 The TSC Contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ ******************************************************************************/
+
 #include "ground.hpp"
 #include "pathmap.hpp"
 #include "util.hpp"
@@ -10,7 +30,6 @@
 #include <xercesc/sax2/XMLReaderFactory.hpp>
 #include <stdexcept>
 #include <vector>
-#include <tuple>
 
 using namespace TSC;
 using namespace std;
@@ -65,7 +84,7 @@ namespace {
 
         int rows;
         int cols;
-        vector<tuple<int, int, int, int>> bboxes;
+        vector<sf::FloatRect> bboxes;
     private:
         string m_chars;
     };
@@ -74,6 +93,9 @@ namespace {
 /**
  * Construct a new level ground object. The `tileset` is a path
  * relative to TSC's data/pixmaps/tilesets directory.
+ *
+ * This method may throw an exception when it encounters a problem
+ * when inspecting the files related to the tileset.
  */
 Ground::Ground(const string& tileset)
     : m_rows(0),
@@ -81,11 +103,14 @@ Ground::Ground(const string& tileset)
 {
     Path tileset_path = Pathmap::GetPixmapsPath() / "tilesets" / tileset;
     if (!tileset_path.exists())
-        throw(runtime_error(format("Tileset '%s' does not exist", tileset_path.utf8_str())));
+        throw(runtime_error(string("Tileset '") + tileset_path.utf8_str() + "' does not exist"));
 
     Path settings_path = tileset_path.sub_ext(".xml");
+
     if (!settings_path.exists())
-        throw(runtime_error(format("Tileset settings file '%s' not found", settings_path.utf8_str())));
+        throw(runtime_error(string("Tileset settings file '") + settings_path.utf8_str() + "' not found"));
+
+    LoadSettingsFile(settings_path.utf8_str());
 
     sf::Image img;
     img.loadFromFile(path2sf(tileset_path));
@@ -113,6 +138,27 @@ Ground::Ground(const string& tileset)
     m_vertices[1].texCoords = sf::Vector2f(256, 0);
     m_vertices[2].texCoords = sf::Vector2f(256, 256);
     m_vertices[3].texCoords = sf::Vector2f(0, 256);
+}
+
+void Ground::LoadSettingsFile(const string& path)
+{
+    unique_ptr<SAX2XMLReader> p_parser(XMLReaderFactory::createXMLReader());
+    p_parser->setFeature(XMLUni::fgSAX2CoreValidation, false);
+
+    TilesetSettingsHandler handler;
+    p_parser->setContentHandler(&handler);
+    p_parser->setErrorHandler(&handler);
+
+    p_parser->parse(U2X(path)); // May throw a Xerces-C parsing exception (which should bubble up)
+
+    m_rows = handler.rows;
+    m_cols = handler.cols;
+    m_colrects.swap(handler.bboxes);
+
+    if (m_rows <= 0)
+        throw(runtime_error("No rows found in the tileset metadata"));
+    if (m_rows <= 0)
+        throw(runtime_error("No columns found in the tileset metadata"));
 }
 
 void Ground::draw(sf::RenderTarget& target, sf::RenderStates states) const
