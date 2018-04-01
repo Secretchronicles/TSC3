@@ -37,8 +37,16 @@ TitleScene::TitleScene()
     m_background.setTexture(TextureCache::Get("misc/title.png"));
     m_background.setPosition(sf::Vector2f(0, 0));
 
-    sp_ground = new Ground("green.png");
-    sp_ground->setPosition(100, 600);
+    vector<Field> fields;
+    fields.emplace_back(0, 0, 0);
+    fields.emplace_back(256, 0, 1);
+    fields.emplace_back(512, 0, 2);
+    fields.emplace_back(0, 256, 3);
+    fields.emplace_back(256, 256, 4);
+    fields.emplace_back(512, 256, 5);
+
+    sp_ground = new Ground("green.png", fields);
+    sp_ground->setPosition(100, 500);
 
     Audio::PlayMusic("title.ogg");
 }

@@ -91,13 +91,22 @@ namespace {
 }
 
 /**
- * Construct a new level ground object. The `tileset` is a path
- * relative to TSC's data/pixmaps/tilesets directory.
+ * Construct a new level ground object.
  *
  * This method may throw an exception when it encounters a problem
  * when inspecting the files related to the tileset.
+ *
+ * \param tileset
+ * Path relative to TSC's data/pixmaps/tilesets directory that gives
+ * the tileset you want to use on the ground.
+ *
+ * \param fields
+ * A list of fields (X/Y coordinate positions and tile ids) that give
+ * the starting points of each tile and the ID of the tile to draw on
+ * it. The width and height of a tile is determined by the size of a
+ * tile in the tileset.
  */
-Ground::Ground(const string& tileset)
+Ground::Ground(const string& tileset, const vector<Field>& fields)
     : m_rows(0),
       m_cols(0)
 {
@@ -125,19 +134,7 @@ Ground::Ground(const string& tileset)
 
     m_tileset.loadFromImage(img);
 
-    // DEBUG: Testing
-    m_vertices.resize(4);
-    m_vertices.setPrimitiveType(sf::Quads);
-
-    m_vertices[0].position = sf::Vector2f(0, 0);
-    m_vertices[1].position = sf::Vector2f(256, 0);
-    m_vertices[2].position = sf::Vector2f(256, 256);
-    m_vertices[3].position = sf::Vector2f(0, 256);
-
-    m_vertices[0].texCoords = sf::Vector2f(0, 0);
-    m_vertices[1].texCoords = sf::Vector2f(256, 0);
-    m_vertices[2].texCoords = sf::Vector2f(256, 256);
-    m_vertices[3].texCoords = sf::Vector2f(0, 256);
+    ReadVertices(fields, img);
 }
 
 void Ground::LoadSettingsFile(const string& path)
@@ -159,6 +156,41 @@ void Ground::LoadSettingsFile(const string& path)
         throw(runtime_error("No rows found in the tileset metadata"));
     if (m_rows <= 0)
         throw(runtime_error("No columns found in the tileset metadata"));
+}
+
+/**
+ * Merges the fields specified when calling the constructor with the information
+ * from the tilset, thereby constructing this Ground's vertex array.
+ */
+void Ground::ReadVertices(const vector<Field>& fields, const sf::Image& img)
+{
+    // Allocate enough vertices for all the fields
+    // (4 vertices for one field required to describe a quad)
+    m_vertices.setPrimitiveType(sf::Quads);
+    m_vertices.resize(fields.size() * 4);
+
+    // Calculate the size of one tile (and thereby, one field).
+    // The tileset dimensions are required to be an exact multiple.
+    int tilewidth  = img.getSize().x / m_cols;
+    int tileheight = img.getSize().y / m_rows;
+
+    for(size_t i=0; i < fields.size(); i++) {
+        // Define the quad for this field (under the assumption that the entire
+        // Ground is at (0|0) -- transformations will take care of moving it around).
+        m_vertices[i*4  ].position = sf::Vector2f(fields[i].x,             fields[i].y);
+        m_vertices[i*4+1].position = sf::Vector2f(fields[i].x + tilewidth, fields[i].y);
+        m_vertices[i*4+2].position = sf::Vector2f(fields[i].x + tilewidth, fields[i].y + tileheight);
+        m_vertices[i*4+3].position = sf::Vector2f(fields[i].x,             fields[i].y + tileheight);
+
+        // Map it to a part of the texture of equal dimensions as described by
+        // the tile index for this field.
+        int row = fields[i].tileid / m_cols;
+        int col = fields[i].tileid % m_cols;
+        m_vertices[i*4  ].texCoords = sf::Vector2f(col * tilewidth,             row * tileheight);
+        m_vertices[i*4+1].texCoords = sf::Vector2f(col * tilewidth + tilewidth, row * tileheight);
+        m_vertices[i*4+2].texCoords = sf::Vector2f(col * tilewidth + tilewidth, row * tileheight + tileheight);
+        m_vertices[i*4+3].texCoords = sf::Vector2f(col * tilewidth,             row * tilewidth + tileheight);
+    }
 }
 
 void Ground::draw(sf::RenderTarget& target, sf::RenderStates states) const
