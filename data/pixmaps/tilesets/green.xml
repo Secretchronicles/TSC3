@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tileset version="1.0">
+  <cols>3</cols>
+  <rows>5</rows>
+  <tiles>
+    <tile>
+      <colrect x="5" y="0" width="251" height="256"/>
+    </tile>
+    <tile>
+      <colrect x="256" y="0" width="256" height="256"/>
+    </tile>
+    <tile>
+      <colrect x="512" y="0" width="251" height="256"/>
+    </tile>
+    <tile>
+      <colrect x="5" y="256" width="251" height="256"/>
+    </tile>
+    <tile>
+      <colrect x="256" y="256" width="256" height="256"/>
+    </tile>
+    <tile>
+      <colrect x="512" y="256" width="251" height="256"/>
+    </tile>
+    <tile>
+      <colrect x="5" y="512" width="251" height="256"/>
+    </tile>
+    <tile>
+      <colrect x="256" y="512" width="256" height="256"/>
+    </tile>
+    <tile>
+      <colrect x="512" y="512" width="251" height="256"/>
+    </tile>
+    <tile>
+      <colrect x="0" y="768" width="256" height="256"/>
+    </tile>
+    <tile>
+      <colrect x="256" y="768" width="256" height="256"/>
+    </tile>
+    <tile>
+      <colrect x="512" y="768" width="256" height="256"/>
+    </tile>
+    <tile>
+      <colrect x="0" y="1024" width="256" height="256"/>
+    </tile>
+    <tile>
+      <colrect x="256" y="1024" width="256" height="256"/>
+    </tile>
+    <tile>
+      <colrect x="512" y="1024" width="256" height="256"/>
+    </tile>
+  </tiles>
+</tileset>
