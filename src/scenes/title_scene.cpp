@@ -25,28 +25,13 @@
 #include "../gui.hpp"
 #include "../i18n.hpp"
 
-#include "../ground.hpp"
-
 using namespace std;
 using namespace TSC;
-
-static Ground* sp_ground;
 
 TitleScene::TitleScene()
 {
     m_background.setTexture(TextureCache::Get("misc/title.png"));
     m_background.setPosition(sf::Vector2f(0, 0));
-
-    vector<Field> fields;
-    fields.emplace_back(0, 0, 0);
-    fields.emplace_back(256, 0, 1);
-    fields.emplace_back(512, 0, 2);
-    fields.emplace_back(0, 256, 3);
-    fields.emplace_back(256, 256, 4);
-    fields.emplace_back(512, 256, 5);
-
-    sp_ground = new Ground("green.png", fields);
-    sp_ground->setPosition(100, 500);
 
     Audio::PlayMusic("title.ogg");
 }
@@ -89,5 +74,4 @@ void TitleScene::Update(const sf::RenderWindow&)
 void TitleScene::Draw(sf::RenderWindow& stage) const
 {
     stage.draw(m_background);
-    stage.draw(*sp_ground);
 }
