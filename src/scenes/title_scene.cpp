@@ -64,7 +64,7 @@ void TitleScene::ProcessEvent(sf::Event& event)
     }
 }
 
-bool TitleScene::Update(const sf::RenderWindow&)
+void TitleScene::Update(const sf::RenderWindow&)
 {
     nk_context* p_ctx = GUI::Get();
 
@@ -84,8 +84,6 @@ bool TitleScene::Update(const sf::RenderWindow&)
         }
     }
     nk_end(p_ctx);
-
-    return true;
 }
 
 void TitleScene::Draw(sf::RenderWindow& stage) const

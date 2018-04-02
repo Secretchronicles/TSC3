@@ -147,7 +147,7 @@ namespace TSC {
          * method causes the main loop to pop the scene from the
          * scene stack at the beginning of the next frame.
          */
-        virtual bool Update(const sf::RenderWindow& stage) = 0;
+        virtual void Update(const sf::RenderWindow& stage) = 0;
         /// Draw() shall draw the updated scene onto the screen.
         /// Game logic updates should be in Update().
         virtual void Draw(sf::RenderWindow& stage) const = 0;
