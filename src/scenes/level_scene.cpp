@@ -21,6 +21,15 @@ LevelScene::~LevelScene()
 {
 }
 
+void LevelScene::ProcessEvent(sf::Event& event)
+{
+    Scene::ProcessEvent(event);
+
+    if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+        Finish();
+    }
+}
+
 void LevelScene::Update(const sf::RenderWindow&)
 {
 }

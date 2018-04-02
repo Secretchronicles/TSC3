@@ -19,10 +19,12 @@
  ******************************************************************************/
 
 #include "title_scene.hpp"
+#include "level_scene.hpp"
 #include "../texture_cache.hpp"
 #include "../pathmap.hpp"
 #include "../audio.hpp"
 #include "../gui.hpp"
+#include "../application.hpp"
 #include "../i18n.hpp"
 
 using namespace std;
@@ -58,7 +60,7 @@ void TitleScene::DoGUI(const sf::RenderWindow& stage)
     if (nk_begin(p_ctx, _("Title Menu"), nk_rect(500, 300, 200, 400), NK_WINDOW_BORDER|NK_WINDOW_NO_INPUT)) {
         nk_layout_row_dynamic(p_ctx, 50, 1);
         if (nk_button_label(p_ctx, _("Start"))) {
-            // TODO: Event handling
+            Application::Instance()->PushScene(unique_ptr<LevelScene>(new LevelScene()));
         }
         if (nk_button_label(p_ctx, _("Levels"))) {
             // TODO: Event handling

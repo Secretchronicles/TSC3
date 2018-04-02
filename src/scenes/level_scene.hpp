@@ -12,6 +12,7 @@ namespace TSC {
         LevelScene();
         virtual ~LevelScene();
 
+        virtual void ProcessEvent(sf::Event& event);
         virtual void Update(const sf::RenderWindow& stage);
         virtual void Draw(sf::RenderWindow& stage) const;
     private:
