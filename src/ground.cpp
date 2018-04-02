@@ -91,6 +91,17 @@ namespace {
 }
 
 /**
+ * Default constructor that creates an empty Ground object. Call
+ * reset() to actually set the ground information.
+ */
+Ground::Ground()
+    : m_rows(0),
+      m_cols(0)
+{
+    //
+}
+
+/**
  * Construct a new level ground object.
  *
  * This method may throw an exception when it encounters a problem
@@ -109,6 +120,16 @@ namespace {
 Ground::Ground(const string& tileset, const vector<Field>& fields)
     : m_rows(0),
       m_cols(0)
+{
+    reset(tileset, fields);
+}
+
+/**
+ * If you used the default constructor, use this function to get the
+ * Ground object ready. It takes the same parameters as the parameterised
+ * constructor.
+ */
+void Ground::reset(const string& tileset, const vector<Field>& fields)
 {
     Path tileset_path = Pathmap::GetPixmapsPath() / "tilesets" / tileset;
     if (!tileset_path.exists())

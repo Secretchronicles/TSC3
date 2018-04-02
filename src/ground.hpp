@@ -75,7 +75,10 @@ namespace TSC {
     class Ground: public sf::Drawable, public sf::Transformable
     {
     public:
+        Ground();
         Ground(const std::string& tileset, const std::vector<Field>& fields);
+
+        void reset(const std::string& tileset, const std::vector<Field>& fields);
     private:
         virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
         void LoadSettingsFile(const std::string& path);
