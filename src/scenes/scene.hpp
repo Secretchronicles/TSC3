@@ -139,7 +139,7 @@ namespace TSC {
         /// Override this function if you want to show GUI windows
         /// to the user. You can use nuklear's GUI construction
         /// functions in this method.
-        virtual void DoGUI() {}
+        virtual void DoGUI(const sf::RenderWindow&) {}
 
         /**
          * Update() shall update all logic in the scene, but not

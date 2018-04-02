@@ -97,7 +97,7 @@ int Application::MainLoop()
             p_scene->ProcessEvent(event);
         }
 
-        p_scene->DoGUI();
+        p_scene->DoGUI(m_window);
         p_scene->Update(m_window);
 
         // Update audio system (especially for fading)

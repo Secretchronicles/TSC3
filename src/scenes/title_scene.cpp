@@ -49,9 +49,9 @@ void TitleScene::ProcessEvent(sf::Event& event)
     }
 }
 
-void TitleScene::DoGUI()
+void TitleScene::DoGUI(const sf::RenderWindow& stage)
 {
-    Scene::DoGUI();
+    Scene::DoGUI(stage);
 
     nk_context* p_ctx = GUI::Get();
 
