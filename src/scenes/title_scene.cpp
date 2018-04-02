@@ -49,8 +49,10 @@ void TitleScene::ProcessEvent(sf::Event& event)
     }
 }
 
-void TitleScene::Update(const sf::RenderWindow&)
+void TitleScene::DoGUI()
 {
+    Scene::DoGUI();
+
     nk_context* p_ctx = GUI::Get();
 
     if (nk_begin(p_ctx, _("Title Menu"), nk_rect(500, 300, 200, 400), NK_WINDOW_BORDER|NK_WINDOW_NO_INPUT)) {
@@ -69,6 +71,10 @@ void TitleScene::Update(const sf::RenderWindow&)
         }
     }
     nk_end(p_ctx);
+}
+
+void TitleScene::Update(const sf::RenderWindow&)
+{
 }
 
 void TitleScene::Draw(sf::RenderWindow& stage) const
