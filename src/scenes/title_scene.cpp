@@ -57,7 +57,10 @@ void TitleScene::DoGUI(const sf::RenderWindow& stage)
 
     nk_context* p_ctx = GUI::Get();
 
-    if (nk_begin(p_ctx, _("Title Menu"), nk_rect(500, 300, 200, 400), NK_WINDOW_BORDER|NK_WINDOW_NO_INPUT)) {
+    int x = (stage.getSize().x - 200) / 2;
+    int y = (stage.getSize().y - 400) / 2;
+
+    if (nk_begin(p_ctx, _("Title Menu"), nk_rect(x, y, 200, 400), NK_WINDOW_BORDER|NK_WINDOW_NO_INPUT)) {
         nk_layout_row_dynamic(p_ctx, 50, 1);
         if (nk_button_label(p_ctx, _("Start"))) {
             Application::Instance()->PushScene(unique_ptr<LevelScene>(new LevelScene()));
