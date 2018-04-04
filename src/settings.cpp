@@ -45,14 +45,14 @@ using namespace Pathie;
 using namespace std;
 
 // The default settings values
-int Settings::screen_width       = 1280;
-int Settings::screen_height      = 1024;
+int Settings::screen_width       = 1920; // Full HD (1080p)
+int Settings::screen_height      = 1080; // Full HD (1080p)
 int Settings::music_volume       = 100;
 int Settings::sound_volume       = 100;
 
 bool Settings::enable_vsync      = false;
 bool Settings::enable_always_run = false;
-bool Settings::enable_fullscreen = false;
+bool Settings::enable_fullscreen = true;
 bool Settings::enable_music      = true;
 bool Settings::enable_sound      = true;
 

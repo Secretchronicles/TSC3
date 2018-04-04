@@ -155,8 +155,15 @@ void Application::OpenWindow()
             Settings::screen_height = mode.height;
     }
 
+    sf::Uint32 style = 0;
+    if (Settings::enable_fullscreen) {
+        style = sf::Style::Fullscreen;
+    } else {
+        style = sf::Style::Titlebar | sf::Style::Close;
+    }
+
     // TRANS: This is the window's title.
-    m_window.create(mode, _("The Secret Chronicles of Dr. M."));
+    m_window.create(mode, _("The Secret Chronicles of Dr. M."), style);
 
     // Enable vsync if requested
     if (Settings::enable_vsync) {
