@@ -34,6 +34,7 @@ namespace TSC {
     sf::String sformat(const std::string& spec, ...);
     sf::String utf82sf(const std::string& utf8);
     sf::String path2sf(const Pathie::Path& path);
+    bool float_equal(float a, float b, float epsilon = 0.0001f);
 }
 
 #endif /* TSC_UTIL_HPP */

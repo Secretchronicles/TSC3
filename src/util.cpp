@@ -23,6 +23,7 @@
 #include <cstdio>
 #include <cstdarg>
 #include <cstdlib>
+#include <cmath>
 #include <pathie/path.hpp>
 #include <SFML/System.hpp>
 
@@ -115,4 +116,17 @@ sf::String TSC::utf82sf(const string& utf8)
 sf::String TSC::path2sf(const Pathie::Path& path)
 {
     return utf82sf(path.utf8_str());
+}
+
+/**
+ * Compares two floats. Two floats are considered equal if
+ * their difference is below the given delta, i.e. if:
+ *
+ *     |a - b| < epsilon
+ *
+ * `epsilon` defaults to 0.0001.
+ */
+bool TSC::float_equal(float a, float b, float epsilon)
+{
+    return fabs(a - b) < epsilon;
 }
