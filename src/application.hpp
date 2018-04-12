@@ -29,6 +29,10 @@ namespace TSC {
     // forward-declare
     class Scene;
 
+    // This is the native resolution.
+    const int NATIVE_WIDTH = 1920;
+    const int NATIVE_HEIGHT = 1080;
+
     /**
      * The Application class contains the game's most basic setup. It can
      * mostly be seen as an OOP abstraction over the main() function that

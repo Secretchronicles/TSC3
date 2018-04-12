@@ -23,6 +23,7 @@
 #include "util.hpp"
 #include "xerces_helpers.hpp"
 #include "pathmap.hpp"
+#include "application.hpp"
 #include <pathie/path.hpp>
 #include <xercesc/sax2/DefaultHandler.hpp>
 #include <xercesc/sax2/SAX2XMLReader.hpp>
@@ -45,8 +46,8 @@ using namespace Pathie;
 using namespace std;
 
 // The default settings values
-int Settings::screen_width       = 1920; // Full HD (1080p)
-int Settings::screen_height      = 1080; // Full HD (1080p)
+int Settings::screen_width       = NATIVE_WIDTH;
+int Settings::screen_height      = NATIVE_HEIGHT;
 int Settings::music_volume       = 100;
 int Settings::sound_volume       = 100;
 
