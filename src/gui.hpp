@@ -60,7 +60,7 @@
 namespace sf {
     class Font;
     class Event; // The SFML docs incorrectly state that this is a union; it isn't, it's a class containing a member and an unnamed union.
-    class RenderWindow;
+    class RenderTarget;
 }
 
 namespace TSC {
@@ -88,8 +88,8 @@ namespace TSC {
 
         void Init();
         void Cleanup();
-        void ProcessEvent(sf::Event& event);
-        void Draw(sf::RenderWindow& window);
+        void ProcessEvent(sf::Event& event, int xdiff, int ydiff);
+        void Draw(sf::RenderTarget& window);
 
         nk_context* Get();
 

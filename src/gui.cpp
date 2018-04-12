@@ -162,9 +162,16 @@ nk_context* GUI::Get()
  * Forward the given event to the GUI system. When processing the events
  * in the main loop, call this once for each event, and before Draw().
  *
+ * `xdiff` and `ydiff` are usually 0. They have different values if black
+ * bars need to be used due to fullscreen mode in non-native resolution.
+ * They're then set to the width/height of one black bar so compensate
+ * mouse event differences. They're always positive, this function knows
+ * that xdiff must be added and ydiff subtracted from a mouse event's
+ * position.
+ *
  * \see Draw()
  */
-void GUI::ProcessEvent(sf::Event& event)
+void GUI::ProcessEvent(sf::Event& event, int xdiff, int ydiff)
 {
     if (!s_gui_enabled)
         return;
@@ -174,13 +181,13 @@ void GUI::ProcessEvent(sf::Event& event)
     static struct nk_vec2 scrollvec;
     switch (event.type) {
     case sf::Event::MouseMoved:
-        nk_input_motion(&s_gui_context, event.mouseMove.x, event.mouseMove.y);
+        nk_input_motion(&s_gui_context, event.mouseMove.x + xdiff, event.mouseMove.y - ydiff);
         break;
     case sf::Event::MouseButtonPressed:
-        nk_input_button(&s_gui_context, SFButton2NKButton(event.mouseButton.button), event.mouseButton.x, event.mouseButton.y, 1);
+        nk_input_button(&s_gui_context, SFButton2NKButton(event.mouseButton.button), event.mouseButton.x + xdiff, event.mouseButton.y - ydiff, 1);
         break;
     case sf::Event::MouseButtonReleased:
-        nk_input_button(&s_gui_context, SFButton2NKButton(event.mouseButton.button), event.mouseButton.x, event.mouseButton.y, 0);
+        nk_input_button(&s_gui_context, SFButton2NKButton(event.mouseButton.button), event.mouseButton.x + xdiff, event.mouseButton.y - ydiff, 0);
         break;
     case sf::Event::MouseWheelScrolled:
         scrollvec.x = scrollvec.y = 0;
@@ -218,7 +225,7 @@ void GUI::ProcessEvent(sf::Event& event)
  *
  * \see ProcessEvent()
  */
-void GUI::Draw(sf::RenderWindow& window)
+void GUI::Draw(sf::RenderTarget& window)
 {
     if (!s_gui_enabled) {
         // Frame clearing is still required, otherwise nuklear gets confused.

@@ -46,7 +46,9 @@ Application* Application::Instance()
 
 Application::Application(int argc, char* argv[])
     : m_terminate(false),
-      m_frame_time(0.0f)
+      m_frame_time(0.0f),
+      m_global_scale(1.0f),
+      mp_intermediate_sprite(nullptr)
 {
     if (sp_app)
         throw(std::runtime_error("Can't have more than one Application instance!"));
@@ -64,6 +66,9 @@ Application::~Application()
 {
     GUI::Cleanup();
     Settings::Save();
+
+    if (mp_intermediate_sprite)
+        delete mp_intermediate_sprite;
 
     xercesc::XMLPlatformUtils::Terminate();
 }
@@ -93,7 +98,7 @@ int Application::MainLoop()
         // Poll events from SFML
         sf::Event event;
         while (m_window.pollEvent(event)) {
-            GUI::ProcessEvent(event);
+            GUI::ProcessEvent(event, m_stage_rect.left, m_stage_rect.top);
             p_scene->ProcessEvent(event);
         }
 
@@ -104,11 +109,32 @@ int Application::MainLoop()
         Audio::Update();
 
         // Draw scene
-        m_window.clear(sf::Color::Black);
-        p_scene->Draw(m_window);
+        if (mp_intermediate_sprite) {
+            /* mp_intermediate_sprite is only set in fullscreen mode if the
+             * requested aspect ratio is not 16:9. The below code draws
+             * the scene into a 16:9 RenderTexture and then blits that
+             * one onto the actual window after that window has been
+             * cleared to black. The effect are black bars around the
+             * blitted RenderTexture. */
+            m_intermediate_target.clear(sf::Color::Black);
+            p_scene->Draw(m_intermediate_target);
 
-        // Draw GUI on top of it
-        GUI::Draw(m_window);
+            // Draw GUI on top of it
+            GUI::Draw(m_intermediate_target);
+
+            // Flip texture's buffers
+            m_intermediate_target.display();
+
+            m_window.clear(sf::Color::Black);
+            m_window.draw(*mp_intermediate_sprite);
+        }
+        else {
+            m_window.clear(sf::Color::Black);
+            p_scene->Draw(m_window);
+
+            // Draw GUI on top of it
+            GUI::Draw(m_window);
+        }
 
         // Draw FPS
         int fps = static_cast<int>(1.0f / m_frame_time);
@@ -143,6 +169,27 @@ void Application::Terminate()
     m_terminate = true;
 }
 
+static sf::IntRect calc_best_stage_size(sf::Vector2u winsize)
+{
+    static const float native_ar = 1920.0f / 1080.0f;
+
+    // Any resolution with native AR is fine
+    if (float_equal(winsize.x / winsize.y, native_ar))
+        return sf::IntRect(0, 0, winsize.x, winsize.y);
+
+    if (winsize.x > winsize.y) {
+        // Subtract from the height to reach 16:9 AR
+        // w/(h-x)=16/9 <=> x=h-(9w/16)
+        unsigned int delta = winsize.y - ((9 * winsize.x) / 16);
+        return sf::IntRect(0, delta / 2, winsize.x, winsize.y - delta);
+    } else { // Rotated monitor?
+        // Subtract from the width to reach 16:9 AR
+        // (w-x)/h=16/9 <=> x=w-(16h/9)
+        unsigned int delta = winsize.x - ((16 * winsize.y) / 9);
+        return sf::IntRect(delta / 2, 0, winsize.x - delta, winsize.y);
+    }
+}
+
 void Application::OpenWindow()
 {
     // Retrieve desired resolution from config. If that resolution is not
@@ -155,11 +202,40 @@ void Application::OpenWindow()
             Settings::screen_height = mode.height;
     }
 
+    // Calculate the maximum acceptable 16:9 stage size under
+    // the requested screen dimensions.
+    m_stage_rect = calc_best_stage_size(sf::Vector2u(mode.width, mode.height));
     sf::Uint32 style = 0;
     if (Settings::enable_fullscreen) {
         style = sf::Style::Fullscreen;
-    } else {
+
+        // Enable the intermediate target if the requested aspect ratio
+        // is not 16:9 (see comments in main loop).
+        if (m_stage_rect.left != 0 || m_stage_rect.top != 0) { // One of them is set to nonzero if not 16:9
+            m_intermediate_target.create(m_stage_rect.width, m_stage_rect.height);
+            mp_intermediate_sprite = new sf::Sprite(m_intermediate_target.getTexture());
+            mp_intermediate_sprite->setPosition(m_stage_rect.left, m_stage_rect.top);
+        }
+    }
+    else {
         style = sf::Style::Titlebar | sf::Style::Close;
+
+        // Reset window size so it matches the 16:9 ratio.
+        // This way black bars are not required.
+        mode = sf::VideoMode(m_stage_rect.width, m_stage_rect.height);
+        m_stage_rect = sf::IntRect(0, 0, m_stage_rect.width, m_stage_rect.height);
+    }
+
+    /* Calculate the global scale factor, i.e. how much scaling is needed
+     * to get from the native resolution (1080p) to the resolution now used
+     * for the m_stage_rect. Due to black bars, everything can be scaled under
+     * maintenance of the aspect ratio, hence a single scale factor is enough. */
+    if (m_stage_rect.width == NATIVE_WIDTH && m_stage_rect.height == NATIVE_HEIGHT) {
+        // Native resolution does not need scaling.
+        m_global_scale = 1.0f;
+    }
+    else {
+        m_global_scale = static_cast<float>(m_stage_rect.width) / static_cast<float>(NATIVE_WIDTH);
     }
 
     // TRANS: This is the window's title.

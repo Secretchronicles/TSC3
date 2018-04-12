@@ -59,9 +59,16 @@ namespace TSC {
         std::unique_ptr<Scene> PopScene();
         void PushScene(std::unique_ptr<Scene> p_scene);
 
+        inline sf::IntRect GetStageRect() const { return m_stage_rect; }
+        inline float GetGlobalScale() const { return m_global_scale; }
+
     private:
         bool m_terminate;
         float m_frame_time; // How long executing the last frame took in total, in seconds.
+        float m_global_scale;
+        sf::IntRect m_stage_rect;
+        sf::Sprite* mp_intermediate_sprite; // Only used if fullscreen mode and non-native aspect ratio
+        sf::RenderTexture m_intermediate_target; // Only used if fullscreen mode and non-native aspect ratio
         sf::RenderWindow m_window;
         sf::Clock m_game_clock;
         sf::Text m_fps;
