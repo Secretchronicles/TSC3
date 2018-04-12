@@ -6,15 +6,34 @@ using namespace std;
 LevelScene::LevelScene()
 {
     vector<Field> fields;
-    fields.emplace_back(0, 0, 0);
-    fields.emplace_back(256, 0, 1);
-    fields.emplace_back(512, 0, 2);
-    fields.emplace_back(0, 256, 3);
-    fields.emplace_back(256, 256, 4);
-    fields.emplace_back(512, 256, 5);
 
-    m_ground.reset("green.png", fields);
-    m_ground.setPosition(100, 500);
+    for (int x=0; x < 1920; x += 64) {
+        fields.emplace_back(x, 1016, 1);
+    }
+
+    for (int y=952; y >= -64; y -= 64) {
+        fields.emplace_back(0, y, 3);
+    }
+    for (int y=952; y >= -64; y -= 64) {
+        fields.emplace_back(64, y, 5);
+    }
+
+    for (int y=952; y >= -64; y -= 64) {
+        fields.emplace_back(1152, y, 3);
+    }
+    for (int y=952; y >= -64; y -= 64) {
+        fields.emplace_back(1216, y, 5);
+    }
+
+    for (int y=952; y >= -64; y -= 64) {
+        fields.emplace_back(1792, y, 3);
+    }
+    for (int y=952; y >= -64; y -= 64) {
+        fields.emplace_back(1856, y, 5);
+    }
+
+    m_ground.reset("green_3.png", fields);
+    m_ground.setPosition(0, 0);
 }
 
 LevelScene::~LevelScene()
