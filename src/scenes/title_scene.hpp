@@ -32,9 +32,9 @@ namespace TSC {
         virtual ~TitleScene();
 
         virtual void ProcessEvent(sf::Event& event);
-        virtual void DoGUI(const sf::RenderWindow& stage);
-        virtual void Update(const sf::RenderWindow& stage);
-        virtual void Draw(sf::RenderWindow& stage) const;
+        virtual void DoGUI(const sf::RenderTarget& stage);
+        virtual void Update(const sf::RenderTarget& stage);
+        virtual void Draw(sf::RenderTarget& stage) const;
 
         sf::Sprite m_background;
     };

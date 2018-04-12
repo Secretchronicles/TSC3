@@ -13,8 +13,8 @@ namespace TSC {
         virtual ~LevelScene();
 
         virtual void ProcessEvent(sf::Event& event);
-        virtual void Update(const sf::RenderWindow& stage);
-        virtual void Draw(sf::RenderWindow& stage) const;
+        virtual void Update(const sf::RenderTarget& stage);
+        virtual void Draw(sf::RenderTarget& stage) const;
     private:
         sf::View m_view;
         Ground m_ground;

@@ -51,7 +51,7 @@ void TitleScene::ProcessEvent(sf::Event& event)
     }
 }
 
-void TitleScene::DoGUI(const sf::RenderWindow& stage)
+void TitleScene::DoGUI(const sf::RenderTarget& stage)
 {
     Scene::DoGUI(stage);
 
@@ -78,11 +78,11 @@ void TitleScene::DoGUI(const sf::RenderWindow& stage)
     nk_end(p_ctx);
 }
 
-void TitleScene::Update(const sf::RenderWindow&)
+void TitleScene::Update(const sf::RenderTarget&)
 {
 }
 
-void TitleScene::Draw(sf::RenderWindow& stage) const
+void TitleScene::Draw(sf::RenderTarget& stage) const
 {
     stage.draw(m_background);
 }

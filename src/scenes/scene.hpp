@@ -23,7 +23,7 @@
 
 // forward-declare
 namespace sf {
-    class RenderWindow;
+    class RenderTarget;
     class Event;
 }
 
@@ -139,7 +139,7 @@ namespace TSC {
         /// Override this function if you want to show GUI windows
         /// to the user. You can use nuklear's GUI construction
         /// functions in this method.
-        virtual void DoGUI(const sf::RenderWindow&) {}
+        virtual void DoGUI(const sf::RenderTarget&) {}
 
         /**
          * Update() shall update all logic in the scene, but not
@@ -147,10 +147,10 @@ namespace TSC {
          * method causes the main loop to pop the scene from the
          * scene stack at the beginning of the next frame.
          */
-        virtual void Update(const sf::RenderWindow& stage) = 0;
+        virtual void Update(const sf::RenderTarget& stage) = 0;
         /// Draw() shall draw the updated scene onto the screen.
         /// Game logic updates should be in Update().
-        virtual void Draw(sf::RenderWindow& stage) const = 0;
+        virtual void Draw(sf::RenderTarget& stage) const = 0;
 
         /// This function is called at the end of the main loop.
         /// You should really not use it. See the class docs

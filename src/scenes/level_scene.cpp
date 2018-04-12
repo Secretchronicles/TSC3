@@ -30,11 +30,11 @@ void LevelScene::ProcessEvent(sf::Event& event)
     }
 }
 
-void LevelScene::Update(const sf::RenderWindow&)
+void LevelScene::Update(const sf::RenderTarget&)
 {
 }
 
-void LevelScene::Draw(sf::RenderWindow& stage) const
+void LevelScene::Draw(sf::RenderTarget& stage) const
 {
     stage.draw(m_ground);
 }
