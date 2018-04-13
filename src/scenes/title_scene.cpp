@@ -34,7 +34,7 @@ TitleScene::TitleScene()
 {
     m_background.setTexture(TextureCache::Get("misc/title.png"));
     m_background.setPosition(sf::Vector2f(0, 0));
-    m_background.setScale(Application::Instance()->GetGlobalScale(), Application::Instance()->GetGlobalScale());
+    m_background.setScale(Application::Instance()->GetGlobalScaleVec());
 
     Audio::PlayMusic("title.ogg");
 }

@@ -60,6 +60,7 @@ namespace TSC {
         void PushScene(std::unique_ptr<Scene> p_scene);
 
         inline sf::IntRect GetStageRect() const { return m_stage_rect; }
+        inline sf::Vector2f GetGlobalScaleVec() const { return sf::Vector2f(m_global_scale, m_global_scale); }
         inline float GetGlobalScale() const { return m_global_scale; }
 
     private:
