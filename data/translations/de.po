@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: TSC3\n"
 "Report-Msgid-Bugs-To: tsc-devel@lists.secretchronicles.org\n"
-"POT-Creation-Date: 2018-03-29 20:20+0200\n"
+"POT-Creation-Date: 2018-04-13 16:16+0300\n"
 "PO-Revision-Date: 2018-03-29 20:19+0200\n"
 "Last-Translator: Marvin Gülker <m-guelker@phoenixmail.de>\n"
 "Language: de\n"
@@ -15,33 +15,32 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../../src/application.cpp:118
+#: ../../src/scenes/title_scene.cpp:64
+msgid "Title Menu"
+msgstr "Titelmenü"
+
+#: ../../src/scenes/title_scene.cpp:66
+msgid "Start"
+msgstr "Start"
+
+#: ../../src/scenes/title_scene.cpp:69
+msgid "Levels"
+msgstr "Ebenen"
+
+#: ../../src/scenes/title_scene.cpp:72
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: ../../src/scenes/title_scene.cpp:75
+msgid "Quit"
+msgstr "Beenden"
+
+#: ../../src/application.cpp:141
 #, c-format
 msgid "FPS: %d"
 msgstr "FPS: %d"
 
 #. TRANS: This is the window's title.
-#: ../../src/application.cpp:163
+#: ../../src/application.cpp:242
 msgid "The Secret Chronicles of Dr. M."
 msgstr "The Secret Chronicles of Dr. M."
-
-#: ../../src/scenes/title_scene.cpp:50
-msgid "Title Menu"
-msgstr "Titelmenü"
-
-#: ../../src/scenes/title_scene.cpp:52
-msgid "Start"
-msgstr "Start"
-
-#: ../../src/scenes/title_scene.cpp:55
-msgid "Levels"
-msgstr "Ebenen"
-
-#: ../../src/scenes/title_scene.cpp:58
-msgid "Settings"
-msgstr "Einstellungen"
-
-#: ../../src/scenes/title_scene.cpp:61
-msgid "Quit"
-msgstr "Beenden"
-
