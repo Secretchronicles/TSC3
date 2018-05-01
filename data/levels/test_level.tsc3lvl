@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<level enginever="300"
+       width="10000"
+       height="3000"
+       fixedcamspeed="0"
+       music="hyper_1.ogg">
+  <player x="100" y="100" dir="right"/>
+  <ground x="0" y="300" tileset="green_3.png">
+    <field relx="0" rely="0" tid="1"/>
+    <field relx="64" rely="0" tid="1"/>
+    <field relx="128" rely="0" tid="1"/>
+    <field relx="192" rely="0" tid="1"/>
+  </ground>
+</level>

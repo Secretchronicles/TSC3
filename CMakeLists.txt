@@ -144,6 +144,8 @@ install(PROGRAMS ${TSC_SOURCE_DIR}/tscproc/tscproc-gui.sh
 
 install(DIRECTORY ${TSC_SOURCE_DIR}/data/pixmaps
   DESTINATION ${CMAKE_INSTALL_DATADIR}/tsc3)
+install(DIRECTORY ${TSC_SOURCE_DIR}/data/levels
+  DESTINATION ${CMAKE_INSTALL_DATADIR}/tsc3)
 install(DIRECTORY ${TSC_SOURCE_DIR}/data/music
   DESTINATION ${CMAKE_INSTALL_DATADIR}/tsc3)
 install(DIRECTORY ${TSC_SOURCE_DIR}/data/fonts

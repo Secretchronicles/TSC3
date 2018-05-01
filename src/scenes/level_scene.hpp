@@ -2,7 +2,7 @@
 #define TSC_LEVEL_SCENE_HPP
 #include <SFML/Graphics.hpp>
 #include "scene.hpp"
-#include "../ground.hpp"
+#include "../level.hpp"
 
 namespace TSC {
 
@@ -17,7 +17,7 @@ namespace TSC {
         virtual void Draw(sf::RenderTarget& stage) const;
     private:
         sf::View m_view;
-        Ground m_ground;
+        Level m_level;
     };
 
 }
