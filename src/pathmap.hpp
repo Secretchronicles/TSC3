@@ -21,16 +21,24 @@
 #ifndef TSC_PATHMAP_HPP
 #define TSC_PATHMAP_HPP
 #include <pathie/path.hpp>
+#include <string>
 
 namespace TSC {
 
     namespace Pathmap {
         Pathie::Path GetConfigPath();
         Pathie::Path GetDataPath();
+        Pathie::Path GetUserDataPath();
         Pathie::Path GetPixmapsPath();
         Pathie::Path GetLocalePath();
         Pathie::Path GetMusicPath();
         Pathie::Path GetFontPath();
+
+        Pathie::Path GetGlobalLevelsPath();
+        Pathie::Path GetUserLevelsPath();
+        Pathie::Path GetGlobalLevelPath(const std::string& relfilename);
+        Pathie::Path GetUserLevelPath(const std::string& relfilename);
+        Pathie::Path GetLevelPath(const std::string& relfilename);
     };
 
 }

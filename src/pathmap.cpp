@@ -21,6 +21,9 @@
 #include "pathmap.hpp"
 #include "config.hpp"
 
+// Short name for the directory to use below ~/.local/share, ~/.config, etc.
+#define TSCDIR "tsc3"
+
 using namespace TSC;
 using namespace Pathie;
 
@@ -29,7 +32,7 @@ using namespace Pathie;
  */
 Path Pathmap::GetConfigPath()
 {
-    return Path::config_dir() / "tsc3" / "config.xml";
+    return Path::config_dir() / TSCDIR / "config.xml";
 }
 
 /**
@@ -40,25 +43,87 @@ Path Pathmap::GetConfigPath()
 Path Pathmap::GetDataPath()
 {
 #ifdef _WIN32
-    return Path::exe().dirname() / ".." / "share" / "tsc3";
+    return Path::exe().dirname() / ".." / "share" / TSCDIR;
 #else
     /* INSTALL_DATADIR is assumed to be UTF-8. This breaks on systems
      * that encode the build system commandline arguments not as UTF-8.
      * Since Win32 is taken care of above already, the problem is small
      * enough to ignore; non-UTF-8 Unices have become rare. And even on
      * those, sticking to plain ASCII works in any case. */
-    return Path(INSTALL_DATADIR) / "tsc3";
+    return Path(INSTALL_DATADIR) / TSCDIR;
 #endif
 }
 
+Path Pathmap::GetUserDataPath()
+{
+    return Path::data_dir() / TSCDIR;
+}
+
 /**
- * Returns the absolute path to the directly where TSC's
+ * Returns the absolute path to the directory where TSC's
  * pixmaps are stored. The directory should be assumed to
  * be read-only.
  */
 Path Pathmap::GetPixmapsPath()
 {
     return GetDataPath() / "pixmaps";
+}
+
+/**
+ * Returns the absolute path to the directory where TSC's
+ * built-in levels are stored. This directory should be assumed
+ * to be read-only.
+ */
+Path Pathmap::GetGlobalLevelsPath()
+{
+    return GetDataPath() / "levels";
+}
+
+/**
+ * Returns the absolute path to the requested global
+ * level.
+ */
+Path Pathmap::GetGlobalLevelPath(const std::string& relfilename)
+{
+    return GetGlobalLevelsPath() / relfilename;
+}
+
+/**
+ * Returns the absolute path to the directory where
+ * the user can store his levels.
+ */
+Path Pathmap::GetUserLevelsPath()
+{
+    return GetUserDataPath() / "levels";
+}
+
+/**
+ * Returns the absolute path to the requested user level.
+ */
+Path Pathmap::GetUserLevelPath(const std::string& relfilename)
+{
+    return GetUserLevelsPath() / relfilename;
+}
+
+/**
+ * Retrieves the absolute path for the given level.
+ * This function first tries to find the level in the
+ * user level directory (see GetUserLevelsPath()). If
+ * the level doesn't exist there, it tries the global
+ * level directory (see GetGlobalLevelsPath()). If the
+ * file is not found there either, throws.
+ */
+Path Pathmap::GetLevelPath(const std::string& relfilename)
+{
+    Path user_level = GetUserLevelPath(relfilename);
+    if (user_level.exists())
+        return user_level;
+
+    Path global_level = GetGlobalLevelPath(relfilename);
+    if (global_level.exists())
+        return global_level;
+
+    throw(std::runtime_error(std::string("Requested level file not found: ") + relfilename));
 }
 
 /**
