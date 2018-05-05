@@ -458,4 +458,32 @@ contribution matches the conventions layed down in this document. If
 you want to initiate a technical peer-review of the contribution, file
 a usual pull request again the target branch.
 
+Scripts
+-------
+
+There shouldn't be any build-related scripts other than the CMake
+collection of files that are an integral part of TSC3's build
+system. If you feel the need to write a non-cmake script, write a Rake
+task; TSC3 specifically has a Rakefile for any task that needs to be
+automated. The Rakefile is just Ruby code with a little sugar on top
+of it for easier writing of tasks, similar to Makefiles but with the
+ease of Ruby.
+
+Scripts that are not build scripts, i.e. scripts intended to be run by
+users, should be written in either Bash or Ruby, depending on the
+complexity of the task. This keeps things simple and prevents us from
+having to learn a wealth of programming languages.
+
+In any case, scripts or Rake tasks should never add dependencies to
+TSC, neither run-time nor build-time dependencies. It is difficult
+enough to get the C++ dependencies right, so one really doesn't want
+to hunt after script dependencies additionally. Ruby specifically has
+a rich standard library that you can and should make use of in your
+scripts, but please don't pull in anything outside the standard
+library. If you absolutely must depend on something external, check if
+you really need to, and if so, use a shellout instead of pulling in a
+library dependencies that burdens the user to know how to use RubyGems
+or similar. Programs can usually be installed via the distribution's
+package manager easily.
+
 [1]: http://www.stroustrup.com/Programming/PPP-style-rev3.pdf

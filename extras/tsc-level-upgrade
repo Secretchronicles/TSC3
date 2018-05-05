@@ -1,0 +1,175 @@
+#!/usr/bin/env ruby
+# coding: utf-8
+# TSC is a 2-dimensional platform game.
+# Copyright © 2018 The TSC Contributors
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+require "yaml"
+require "rexml/document"
+require "rexml/xpath"
+
+TID_MAPPINGS = YAML.load(DATA.read).freeze
+
+if ARGV.count < 2 || ARGV.include?("-h")
+  puts "Usage:"
+  puts "tsc-level-upgrade INFILE OUTFILE"
+  puts
+  puts "tsc-level-upgrade upgrades TSC2 levels to the TSC3 level format."
+  puts "Information that can't be converted is dropped."
+  puts "Always be sure to check the level after the conversion."
+
+  puts
+  puts "The TSC2 level contained in INFILE will be converted and"
+  puts "written to OUTFILE. If OUTFILE exists, it is overwritten."
+  exit 0
+end
+
+# Output diagnostic text to the standard error stream.
+def msg(text)
+  $stderr.puts(text)
+end
+
+def convert_metadata(source_xml, target_xml)
+  msg "Converting level metadata"
+  node = REXML::XPath.first(source_xml, "/level/settings/property[@name='cam_limit_w']")
+  level_width = node.attributes["value"].to_i
+  node = REXML::XPath.first(source_xml, "/level/settings/property[@name='cam_limit_h']")
+  level_height = node.attributes["value"].to_i
+  node = REXML::XPath.first(source_xml, "/level/settings/property[@name='cam_fixed_hor_vel']")
+  fixed_cam_speed = node.attributes["value"].to_f
+  node = REXML::XPath.first(source_xml, "/level/settings/property[@name='lvl_music']")
+  music = node.attributes["value"]
+
+  target_xml.add_element "level", {"enginever" => "300",
+                                   "width" => level_width,
+                                   "height" => level_height,
+                                   "fixedcamspeed" => fixed_cam_speed,
+                                   "music" => music}
+end
+
+def convert_ground(source_xml, target_xml)
+  grounds = {}
+  msg "Searching for ground tiles"
+
+  # Extract all sprites that form the level ground. This is done
+  # under the assumption that the level ground is constructed
+  # only (or mostly) from images under TSC2's ground/ pixmap directory.
+  # Also find out which tilesets were used. The information is arranged
+  # into a hash of form {tileset => [list, of, sprites]}
+  REXML::XPath.each(source_xml, "/level/sprite") do |sprite|
+    if prop = REXML::XPath.first(sprite, "property[@name='image']") # Single = intended
+      if prop.attributes["value"] =~ /^ground\/([a-z0-9\-_]+)\//
+        grounds[$1] ||= []
+        grounds[$1] << sprite
+      end
+    end
+  end
+
+  if grounds.empty?
+    msg "Found no ground tiles."
+    return
+  else
+    msg "Found tilesets: #{grounds.keys.join(', ')}"
+  end
+
+  # Determine X/Y offset
+  offsets = {}
+  grounds.each_pair do |tileset, sprites|
+    offsets[tileset] = {:minx => 999999, :miny => 999999}
+    sprites.each do |sprite|
+      x = REXML::XPath.first(sprite, "property[@name='posx']").attributes["value"].to_i
+      offsets[tileset][:minx] = x if x < offsets[tileset][:minx]
+      y = REXML::XPath.first(sprite, "property[@name='posy']").attributes["value"].to_i
+      offsets[tileset][:miny] = y if y < offsets[tileset][:miny]
+    end
+  end
+
+  # Remove grounds with not-yet-known tilesets
+  grounds.keys.each do |tileset|
+    unless TID_MAPPINGS[tileset]
+      msg "Warning: No tileset mappings defined for tileset #{tileset}."
+      msg "Warning: Ignoring all sprites in this tileset."
+      grounds.delete(tileset)
+    end
+  end
+
+  # Convert tiles into ground with fields with relative
+  # offset.
+  msg "Converting ground information"
+  grounds.each_pair do |tileset, sprites|
+    ground_node = target_xml.root.add_element "ground", {"x" => offsets[tileset][:minx],
+                                                         "y" => offsets[tileset][:miny],
+                                                         "tileset" => "#{tileset}.png"}
+    sprites.each do |sprite|
+      # Fetch X/Y coordinate
+      x = REXML::XPath.first(sprite, "property[@name='posx']").attributes["value"].to_i
+      y = REXML::XPath.first(sprite, "property[@name='posy']").attributes["value"].to_i
+      # Get image path relative to (TSC3) tilset name
+      path = REXML::XPath.first(sprite, "property[@name='image']").attributes["value"]
+      path.sub!("ground/#{tileset}/", "")
+      # Find tileset ID
+      tid = TID_MAPPINGS[tileset][path]
+
+      unless tid
+        msg "Warning: Image not found in tileset #{tileset}: #{path}"
+        next
+      end
+
+      # Convert
+      ground_node.add_element "field", {"relx" => x - offsets[tileset][:minx],
+                                        "rely" => y - offsets[tileset][:miny],
+                                        "tid" => tid}
+    end
+  end
+end
+
+def upgrade_level(infile, outfile)
+  source_xml = REXML::Document.new(File.open(infile, "r:UTF-8"){|f| f.read})
+  target_xml = REXML::Document.new
+  target_xml << REXML::XMLDecl.new("1.0", "UTF-8", "yes")
+
+  convert_metadata(source_xml, target_xml)
+  convert_ground(source_xml, target_xml)
+
+  msg "Writing result to #{outfile}"
+  File.open(outfile, "w:UTF-8") do |file|
+    target_xml.write(output: file, indent: 2)
+  end
+end
+
+upgrade_level(ARGV[0], ARGV[1])
+
+# Following is the tile ID mapping data in YAML format.
+# The format is:
+#  tileset_name:
+#    relative/TSC2/image/path: tileid in TSC3
+# Do not remove the __END__ line. It tells Ruby to stop
+# parsing the script file at this point and makes everything
+# beneath available as a string via the DATA pseudo-constant.
+__END__
+green_3:
+  ground/top/left.png: 0
+  ground/top/1.png: 1
+  ground/top/right.png: 2
+  ground/middle/1.png: 4
+  ground/middle/left.png: 3
+  ground/middle/right.png: 5
+  ground/middle/left_bottom.png: 10
+  ground_middle/right_bottom.png: 9
+  ground/middle/left_top.png: 13
+  ground/middle/right_top.png: 12
+  ground/bottom/1.png: 7
+  ground/bottom/left.png: 6
+  ground/bottom/right.png: 8
